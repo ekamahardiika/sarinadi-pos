@@ -1,77 +1,192 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="container">
-    <div class="row justify-content-center">
-        <div class="col-md-8">
-            <div class="card">
-                <div class="card-header">{{ __('Register') }}</div>
+<style>
+    /* CSS Kustom untuk Tampilan yang Lebih Menarik (Sama dengan Login) */
+    body {
+        background-color: #fdfbf7; /* Warna krem lembut */
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
 
-                <div class="card-body">
-                    <form method="POST" action="{{ route('register') }}">
-                        @csrf
+    .login-card {
+        border: none;
+        border-radius: 20px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        overflow: hidden;
+        max-width: 400px;
+        width: 100%;
+        margin: 0 auto;
+    }
 
-                        <div class="row mb-3">
-                            <label for="name" class="col-md-4 col-form-label text-md-end">{{ __('Name') }}</label>
+    .card-header-custom {
+        background-color: #fff;
+        padding: 30px 20px 10px 20px;
+        text-align: center;
+    }
 
-                            <div class="col-md-6">
-                                <input id="name" type="text" class="form-control @error('name') is-invalid @enderror" name="name" value="{{ old('name') }}" required autocomplete="name" autofocus>
+    .logo-img {
+        width: 100px;
+        height: 100px;
+        object-fit: cover;
+        border-radius: 50%;
+        border: 4px solid #fff;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        margin-bottom: 15px;
+    }
 
-                                @error('name')
-                                    <span class="invalid-feedback" role="alert">
-                                        <strong>{{ $message }}</strong>
-                                    </span>
-                                @enderror
-                            </div>
-                        </div>
+    .brand-title {
+        color: #d35400; /* Warna oranye gelap khas makanan */
+        font-weight: 700;
+        font-size: 1.2rem;
+        margin-bottom: 5px;
+    }
 
-                        <div class="row mb-3">
-                            <label for="email" class="col-md-4 col-form-label text-md-end">{{ __('Email Address') }}</label>
+    .brand-subtitle {
+        color: #7f8c8d;
+        font-size: 0.85rem;
+        margin-bottom: 20px;
+    }
 
-                            <div class="col-md-6">
-                                <input id="email" type="email" class="form-control @error('email') is-invalid @enderror" name="email" value="{{ old('email') }}" required autocomplete="email">
+    .form-control {
+        border-radius: 10px;
+        padding: 12px 15px;
+        border: 1px solid #e0e0e0;
+        background-color: #f9f9f9;
+    }
 
-                                @error('email')
-                                    <span class="invalid-feedback" role="alert">
-                                        <strong>{{ $message }}</strong>
-                                    </span>
-                                @enderror
-                            </div>
-                        </div>
+    .form-control:focus {
+        box-shadow: 0 0 0 3px rgba(211, 84, 0, 0.2);
+        border-color: #d35400;
+    }
 
-                        <div class="row mb-3">
-                            <label for="password" class="col-md-4 col-form-label text-md-end">{{ __('Password') }}</label>
+    .btn-login {
+        background-color: #d35400;
+        border: none;
+        border-radius: 10px;
+        padding: 12px;
+        font-weight: 600;
+        letter-spacing: 0.5px;
+        transition: all 0.3s ease;
+        width: 100%;
+    }
 
-                            <div class="col-md-6">
-                                <input id="password" type="password" class="form-control @error('password') is-invalid @enderror" name="password" required autocomplete="new-password">
+    .btn-login:hover {
+        background-color: #a04000;
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(211, 84, 0, 0.3);
+    }
 
-                                @error('password')
-                                    <span class="invalid-feedback" role="alert">
-                                        <strong>{{ $message }}</strong>
-                                    </span>
-                                @enderror
-                            </div>
-                        </div>
+    .input-group-text {
+        background-color: transparent;
+        border: none;
+        color: #d35400;
+    }
+    
+    .input-group .form-control {
+        border-left: none;
+    }
+    
+    .input-group .input-group-text {
+        border-right: none;
+        border-radius: 10px 0 0 10px;
+    }
+</style>
 
-                        <div class="row mb-3">
-                            <label for="password-confirm" class="col-md-4 col-form-label text-md-end">{{ __('Confirm Password') }}</label>
-
-                            <div class="col-md-6">
-                                <input id="password-confirm" type="password" class="form-control" name="password_confirmation" required autocomplete="new-password">
-                            </div>
-                        </div>
-
-                        <div class="row mb-0">
-                            <div class="col-md-6 offset-md-4">
-                                <button type="submit" class="btn btn-primary">
-                                    {{ __('Register') }}
-                                </button>
-                            </div>
-                        </div>
-                    </form>
-                </div>
+<!-- Container Utama: Center Vertikal & Horizontal -->
+<div class="container d-flex justify-content-center align-items-center min-vh-100">
+    <div class="col-md-6 col-lg-4">
+        
+        <!-- Mulai Kartu Register -->
+        <div class="card login-card">
+            
+            <!-- Bagian Header: Gambar & Tulisan -->
+            <div class="card-header-custom">
+                <!-- Ganti src dengan URL gambar Babi Guling asli Anda -->
+                <img src="https://images.unsplash.com/photo-1540189549336-e6e99c3679fe?ixlib=rb-4.0.3&auto=format&fit=crop&w=200&q=80" alt="Babi Guling" class="logo-img">
+                
+                <h2 class="brand-title">Warung Babi Guling</h2>
+                <h5 class="brand-title">Sari Nadi</h5>
+                <p class="brand-subtitle">Bergabunglah untuk pesan makanan</p>
             </div>
+
+            <!-- Bagian Form Register -->
+            <div class="card-body p-4">
+                <form method="POST" action="{{ route('register') }}">
+                    @csrf
+
+                    <!-- Nama -->
+                    <div class="mb-3">
+                        <label for="name" class="form-label text-muted small fw-bold">Nama Lengkap</label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="fas fa-user"></i></span>
+                            <input id="name" type="text" class="form-control @error('name') is-invalid @enderror" name="name" value="{{ old('name') }}" required autocomplete="name" autofocus placeholder="Nama Anda">
+                            @error('name')
+                                <div class="invalid-feedback d-block mt-1">
+                                    <small>{{ $message }}</small>
+                                </div>
+                            @enderror
+                        </div>
+                    </div>
+
+                    <!-- Email -->
+                    <div class="mb-3">
+                        <label for="email" class="form-label text-muted small fw-bold">Email Address</label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="fas fa-envelope"></i></span>
+                            <input id="email" type="email" class="form-control @error('email') is-invalid @enderror" name="email" value="{{ old('email') }}" required autocomplete="email" placeholder="nama@email.com">
+                            @error('email')
+                                <div class="invalid-feedback d-block mt-1">
+                                    <small>{{ $message }}</small>
+                                </div>
+                            @enderror
+                        </div>
+                    </div>
+
+                    <!-- Password -->
+                    <div class="mb-3">
+                        <label for="password" class="form-label text-muted small fw-bold">Password</label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="fas fa-lock"></i></span>
+                            <input id="password" type="password" class="form-control @error('password') is-invalid @enderror" name="password" required autocomplete="new-password" placeholder="••••••••">
+                            @error('password')
+                                <div class="invalid-feedback d-block mt-1">
+                                    <small>{{ $message }}</small>
+                                </div>
+                            @enderror
+                        </div>
+                    </div>
+
+                    <!-- Konfirmasi Password -->
+                    <div class="mb-4">
+                        <label for="password-confirm" class="form-label text-muted small fw-bold">Konfirmasi Password</label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="fas fa-key"></i></span>
+                            <input id="password-confirm" type="password" class="form-control" name="password_confirmation" required autocomplete="new-password" placeholder="Ulangi password">
+                        </div>
+                    </div>
+
+                    <!-- Submit Button -->
+                    <div class="d-grid gap-2">
+                        <button type="submit" class="btn btn-primary btn-login text-white">
+                            DAFTAR <i class="fas fa-user-plus ms-2"></i>
+                        </button>
+                    </div>
+                </form>
+            </div>
+            
+            <!-- Footer Kecil -->
+            <div class="card-footer text-center bg-white border-0 pb-3">
+                <small class="text-muted">
+                    {{ __('Already have an account?') }} 
+                    <a href="{{ route('login') }}" class="text-decoration-none fw-bold" style="color: #d35400;">
+                        {{ __('Login here') }}
+                    </a>
+                </small>
+            </div>
+
         </div>
+        <!-- Selesai Kartu Register -->
+
     </div>
 </div>
 @endsection

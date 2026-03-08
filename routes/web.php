@@ -20,3 +20,19 @@ Route::get('/', function () {
 Auth::routes();
 
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
+
+Route::get('/dashboard', function () {
+    return view('dashboard.index');
+})->middleware('auth');
+
+Route::get('/produk', function () {
+    return view('produk.index');
+})->middleware('auth');
+
+Route::get('/transaksi', function () {
+    return view('transaksi.index');
+})->middleware('auth');
+
+Route::get('/laporan', function () {
+    return view('laporan.index');
+})->middleware('auth');
