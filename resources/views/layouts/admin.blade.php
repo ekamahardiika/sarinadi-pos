@@ -329,5 +329,6 @@ $(document).ready(function(){
         }
     });
 </script>
+@stack('scripts')
 </body>
 </html>

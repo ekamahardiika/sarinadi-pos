@@ -68,17 +68,12 @@
                                 Edit
                             </a>
 
-                            <form action="{{ route('produk.destroy', $item->id) }}" 
-                                  method="POST" 
-                                  style="display:inline;">
-                                @csrf
-                                @method('DELETE')
-
-                                <button class="btn btn-danger btn-sm"
-                                    onclick="return confirm('Yakin hapus produk?')">
-                                    Hapus
-                                </button>
-                            </form>
+                            <button 
+                                class="btn btn-danger btn-sm btnHapus"
+                                data-id="{{ $item->id }}"
+                                data-nama="{{ $item->nama_produk }}">
+                                Hapus
+                            </button>
 
                         </td>
 
@@ -93,4 +88,64 @@
 
 </div>
 
+
+<!-- Modal Konfirmasi Hapus -->
+<div class="modal fade" id="modalHapus" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+
+            <div class="modal-header bg-danger text-white">
+                <h5 class="modal-title">Konfirmasi Hapus</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+
+            <div class="modal-body">
+                Apakah Anda yakin ingin menghapus produk
+                <strong id="namaProduk"></strong> ?
+            </div>
+
+            <div class="modal-footer">
+
+                <form id="formHapus" method="POST">
+                    @csrf
+                    @method('DELETE')
+
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                        Batal
+                    </button>
+
+                    <button type="submit" class="btn btn-danger">
+                        Hapus
+                    </button>
+
+                </form>
+
+            </div>
+
+        </div>
+    </div>
+</div>
+
 @endsection
+
+
+@push('scripts')
+<script>
+
+$(document).on('click','.btnHapus',function(){
+
+    let id = $(this).data('id');
+    let nama = $(this).data('nama');
+
+    $('#namaProduk').text(nama);
+
+    let url = "/produk/" + id;
+
+    $('#formHapus').attr('action', url);
+
+    $('#modalHapus').modal('show');
+
+});
+
+</script>
+@endpush
