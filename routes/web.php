@@ -1,17 +1,8 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-
-/*
-|--------------------------------------------------------------------------
-| Web Routes
-|--------------------------------------------------------------------------
-|
-| Here is where you can register web routes for your application. These
-| routes are loaded by the RouteServiceProvider and all of them will
-| be assigned to the "web" middleware group. Make something great!
-|
-*/
+use App\Http\Controllers\ProdukController;
+use App\Http\Controllers\TransaksiController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -21,18 +12,19 @@ Auth::routes();
 
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
 
-Route::get('/dashboard', function () {
-    return view('dashboard.index');
-})->middleware('auth');
+// Resource route sudah cukup, hapus Route::get('/produk',...) di bawah
+Route::resource('produk', ProdukController::class)->middleware('auth');
 
-Route::get('/produk', function () {
-    return view('produk.index');
-})->middleware('auth');
+Route::get('/transaksi', [TransaksiController::class,'index'])->name('transaksi.index');
+Route::post('/transaksi', [TransaksiController::class,'store'])->name('transaksi.store');
+Route::get('/riwayat-transaksi', [TransaksiController::class,'riwayat'])->name('transaksi.riwayat');
+Route::get('/transaksi-detail/{id}', [TransaksiController::class,'detail'])->name('transaksi.detail');
 
-Route::get('/transaksi', function () {
-    return view('transaksi.index');
-})->middleware('auth');
+Route::middleware('auth')->group(function () {
+    Route::get('/dashboard', fn() => view('dashboard.index'));
+    Route::get('/laporan', fn() => view('laporan.index'));
+});
 
-Route::get('/laporan', function () {
-    return view('laporan.index');
-})->middleware('auth');
+// ❌ HAPUS baris-baris ini (duplikat & tidak passing $produk):
+// Route::get('/produk', function () { return view('produk.index'); })->middleware('auth');
+// Route::get('/transaksi', function () { return view('transaksi.index'); })->middleware('auth');
