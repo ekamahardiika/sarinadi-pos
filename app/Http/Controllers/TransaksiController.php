@@ -6,89 +6,91 @@ use Illuminate\Http\Request;
 use App\Models\Produk;
 use App\Models\Transaksi;
 use App\Models\DetailTransaksi;
-use Illuminate\Support\Facades\DB;
 
 class TransaksiController extends Controller
 {
+
     public function index()
     {
         $produk = Produk::all();
+
         return view('transaksi.index', compact('produk'));
     }
 
+
     public function store(Request $request)
     {
+        $request->validate([
+            'produk_id' => 'required|array',
+            'jumlah' => 'required|array',
+            'metode_pembayaran' => 'required'
+        ]);
 
-        DB::beginTransaction();
+        $subtotal = 0;
 
-        try {
+        // hitung subtotal
+        foreach ($request->produk_id as $i => $id) {
 
-            $subtotal = 0;
+            $produk = Produk::findOrFail($id);
 
-            foreach ($request->produk_id as $key => $produk_id) {
+            $subtotal += $produk->harga * $request->jumlah[$i];
+        }
 
-                $produk = Produk::findOrFail($produk_id);
+        // hitung kembalian (jika cash)
+        $uangCustomer = $request->uang_customer ?? 0;
+        $kembalian = $request->metode_pembayaran == 'cash'
+            ? $uangCustomer - $subtotal
+            : 0;
 
-                $jumlah = $request->jumlah[$key];
+        // simpan transaksi
+        $transaksi = Transaksi::create([
+            'kode_transaksi' => 'TRX-' . time(),
+            'subtotal' => $subtotal,
+            'metode_pembayaran' => $request->metode_pembayaran,
+            'uang_customer' => $uangCustomer,
+            'kembalian' => $kembalian
+        ]);
 
-                $total = $produk->harga * $jumlah;
 
-                $subtotal += $total;
+        // simpan detail transaksi
+        foreach ($request->produk_id as $i => $id) {
 
-                $detail[] = [
-                    'produk_id' => $produk_id,
-                    'jumlah' => $jumlah,
-                    'harga_satuan' => $produk->harga,
-                    'total_harga' => $total
-                ];
-            }
+            $produk = Produk::findOrFail($id);
 
-            $kembalian = null;
+            $jumlah = $request->jumlah[$i];
+            $harga = $produk->harga;
+            $total = $jumlah * $harga;
 
-            if ($request->metode_pembayaran == 'cash') {
-                $kembalian = $request->uang_customer - $subtotal;
-            }
-
-            $transaksi = Transaksi::create([
-                'kode_transaksi' => 'TRX'.time(),
-                'subtotal' => $subtotal,
-                'metode_pembayaran' => $request->metode_pembayaran,
-                'uang_customer' => $request->uang_customer,
-                'kembalian' => $kembalian
+            DetailTransaksi::create([
+                'transaksi_id' => $transaksi->id,
+                'produk_id' => $id,
+                'jumlah' => $jumlah,
+                'harga_satuan' => $harga,
+                'total_harga' => $total
             ]);
 
-            foreach ($detail as $item) {
-
-                DetailTransaksi::create([
-                    'transaksi_id' => $transaksi->id,
-                    'produk_id' => $item['produk_id'],
-                    'jumlah' => $item['jumlah'],
-                    'harga_satuan' => $item['harga_satuan'],
-                    'total_harga' => $item['total_harga']
-                ]);
-            }
-
-            DB::commit();
-
-            return redirect()->back()->with('success','Transaksi berhasil');
-
-        } catch (\Exception $e) {
-
-            DB::rollback();
-
-            return back()->with('error',$e->getMessage());
+            // kurangi stok
+            $produk->decrement('stok', $jumlah);
         }
+
+        return redirect()->route('transaksi.show', $transaksi->id);
     }
+
+
 
     public function riwayat()
     {
         $transaksi = Transaksi::latest()->get();
+
         return view('transaksi.riwayat', compact('transaksi'));
     }
 
-    public function detail($id)
+
+
+    public function show($id)
     {
         $transaksi = Transaksi::with('detail.produk')->findOrFail($id);
+
         return view('transaksi.detail', compact('transaksi'));
     }
 }

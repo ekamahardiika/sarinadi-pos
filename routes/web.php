@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\DashboardController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ProdukController;
 use App\Http\Controllers\TransaksiController;
@@ -15,13 +16,24 @@ Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name
 // Resource route sudah cukup, hapus Route::get('/produk',...) di bawah
 Route::resource('produk', ProdukController::class)->middleware('auth');
 
+// Route::get('/transaksi', [TransaksiController::class,'index'])->name('transaksi.index');
+// Route::post('/transaksi', [TransaksiController::class,'store'])->name('transaksi.store');
+// Route::get('/riwayat-transaksi', [TransaksiController::class,'riwayat'])->name('transaksi.show');
+// Route::get('/transaksi-detail/{id}', [TransaksiController::class,'detail'])->name('transaksi.detail');
+
 Route::get('/transaksi', [TransaksiController::class,'index'])->name('transaksi.index');
-Route::post('/transaksi', [TransaksiController::class,'store'])->name('transaksi.store');
-Route::get('/riwayat-transaksi', [TransaksiController::class,'riwayat'])->name('transaksi.riwayat');
-Route::get('/transaksi-detail/{id}', [TransaksiController::class,'detail'])->name('transaksi.detail');
+
+Route::post('/transaksi/store', [TransaksiController::class,'store'])->name('transaksi.store');
+
+Route::get('/transaksi/riwayat', [TransaksiController::class,'riwayat'])->name('transaksi.riwayat');
+
+Route::get('/transaksi/{id}', [TransaksiController::class,'show'])->name('transaksi.show');
+
+Route::get('/dashboard', [DashboardController::class, 'index'])
+    ->name('dashboard.index');
 
 Route::middleware('auth')->group(function () {
-    Route::get('/dashboard', fn() => view('dashboard.index'));
+    // Route::get('/dashboard', fn() => view('dashboard.index'));
     Route::get('/laporan', fn() => view('laporan.index'));
 });
 

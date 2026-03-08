@@ -137,7 +137,8 @@
             height: 4rem; background: #fff;
             border-bottom: 1px solid #e3e6f0;
             display: flex; align-items: center;
-            padding: 0 1.5rem; gap: 1rem;
+            padding: 0 0.5rem; 
+            gap: 1rem;
             position: sticky; top: 0; z-index: 100;
             box-shadow: 0 .125rem .25rem rgba(0,0,0,.04);
         }
@@ -227,6 +228,11 @@
             <a class="nav-link {{ request()->is('transaksi*') ? 'active' : '' }}" href="{{ url('/transaksi') }}">
                 <span class="nav-icon"><i class="fas fa-shopping-cart"></i></span>
                 Transaksi
+            </a>
+
+            <a class="nav-link {{ request()->is('transaksi-riwayat*') ? 'active' : '' }}" href="{{ url('/transaksi/riwayat') }}">
+                <span class="nav-icon"><i class="fas fa-shopping-cart"></i></span>
+                Riwayat Transaksi
             </a>
 
             <a class="nav-link {{ request()->is('produk*') ? 'active' : '' }}" href="{{ url('/produk') }}">
