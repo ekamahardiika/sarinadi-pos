@@ -44,7 +44,7 @@ class LaporanController extends Controller
                 ];
             }
         } elseif ($filter === 'bulanan') {
-            $grouped = $transaksis->groupBy(fn($t) => $t->created_at->toDateString());
+            $grouped = $transaksis->groupBy(fn($t) => $t->created_at->format('Y-m-d'));
             $no = 1;
             foreach ($grouped as $tgl => $items) {
                 $laporan[] = [
@@ -53,7 +53,7 @@ class LaporanController extends Controller
                     'pendapatan' => $items->sum('subtotal'),
                 ];
             }
-        } else {
+        } else { // tahunan
             $grouped = $transaksis->groupBy(fn($t) => $t->created_at->format('Y-m'));
             $no = 1;
             foreach ($grouped as $bulan => $items) {
@@ -116,7 +116,6 @@ class LaporanController extends Controller
         ));
     }
 
-
     public function produkTerlaris(Request $request)
     {
         Carbon::setLocale('id');
@@ -141,26 +140,32 @@ class LaporanController extends Controller
 
         $produkTerlaris = [];
 
+        // Loop semua transaksi → detail → produk
         foreach ($transaksis as $t) {
             foreach ($t->detail as $item) {
-                if (!$item->produk) continue;
+                $produk = $item->produk;
+                if (!$produk || !$item->produk_id) continue;
 
-                $id = $item->produk_id;
+                $id = (int) $item->produk_id;
+
                 if (!isset($produkTerlaris[$id])) {
                     $produkTerlaris[$id] = [
-                        'produk'     => $item->produk->nama_produk,
+                        'produk'     => $produk->nama_produk,
                         'terjual'    => 0,
                         'pendapatan' => 0,
                     ];
                 }
 
-                $produkTerlaris[$id]['terjual'] += $item->jumlah;
-                $subtotal = $item->total_harga ?? ($item->jumlah * $item->harga_satuan);
-                $produkTerlaris[$id]['pendapatan'] += $subtotal;
+                $jumlah = (int) $item->jumlah;
+                $harga  = $item->total_harga ?? ($jumlah * ($item->harga_satuan ?? 0));
+
+                $produkTerlaris[$id]['terjual'] += $jumlah;
+                $produkTerlaris[$id]['pendapatan'] += $harga;
             }
         }
 
-        usort($produkTerlaris, fn($a, $b) => $b['terjual'] <=> $a['terjual']);
+        // Urutkan berdasarkan jumlah terjual, jika sama urutkan pendapatan
+        usort($produkTerlaris, fn($a, $b) => $b['terjual'] <=> $a['terjual'] ?: $b['pendapatan'] <=> $a['pendapatan']);
 
         $laporan = collect(array_values($produkTerlaris))->map(function ($item, $index) {
             return [
@@ -218,7 +223,6 @@ class LaporanController extends Controller
 
         return view('laporan.terlaris', compact('laporan', 'filter', 'date', 'month', 'year'));
     }
-
 
     public function metodePembayaran(Request $request)
     {
@@ -289,7 +293,7 @@ class LaporanController extends Controller
             $laporan = $rows;
         }
 
-        // Summary cards
+        // Summary
         $cash = $transaksis->where('metode_pembayaran', 'cash');
         $qris = $transaksis->where('metode_pembayaran', 'qris');
 
@@ -320,131 +324,39 @@ class LaporanController extends Controller
             'tahunan' => 'Periode: Tahun ' . $year,
         };
 
+        // === Export Excel ===
         if ($export === 'excel') {
-            // Susun kolom sesuai filter
-            if ($filter === 'harian') {
-                $headers = ['No', 'Kode Transaksi', 'Metode', 'Nominal'];
-                $rows = $laporan->map(fn($r) => [$r['no'], $r['kode_transaksi'], $r['metode'], $r['nominal']]);
-            } elseif ($filter === 'bulanan') {
-                $headers = ['No', 'Tanggal', 'Metode', 'Nominal'];
-                $rows = $laporan->map(fn($r) => [$r['no'], $r['tanggal'], $r['metode'], $r['nominal']]);
-            } else {
-                $headers = ['No', 'Bulan', 'Metode', 'Nominal'];
-                $rows = $laporan->map(fn($r) => [$r['no'], $r['bulan'], $r['metode'], $r['nominal']]);
-            }
-
+            $filename = "Metode_Pembayaran_" . date('Ymd_His') . ".xlsx";
             return Excel::download(
-                new class($headers, $rows, $judulPeriode, $totalCash, $totalQris, $totalKeseluruhan, $jumlahCash, $jumlahQris)
-                implements
-                    \Maatwebsite\Excel\Concerns\FromCollection,
-                    \Maatwebsite\Excel\Concerns\WithHeadings,
-                    \Maatwebsite\Excel\Concerns\WithTitle,
-                    \Maatwebsite\Excel\Concerns\WithStyles,
-                    \Maatwebsite\Excel\Concerns\ShouldAutoSize
-                {
-                    protected $headers;
-                    protected $rows;
-                    protected $judulPeriode;
-                    protected $totalCash;
-                    protected $totalQris;
-                    protected $totalKeseluruhan;
-                    protected $jumlahCash;
-                    protected $jumlahQris;
-
-                    public function __construct($headers, $rows, $judulPeriode, $totalCash, $totalQris, $totalKeseluruhan, $jumlahCash, $jumlahQris)
+                new class($laporan) implements \Maatwebsite\Excel\Concerns\FromCollection {
+                    protected $data;
+                    public function __construct($data)
                     {
-                        $this->headers          = $headers;
-                        $this->rows             = $rows;
-                        $this->judulPeriode     = $judulPeriode;
-                        $this->totalCash        = $totalCash;
-                        $this->totalQris        = $totalQris;
-                        $this->totalKeseluruhan = $totalKeseluruhan;
-                        $this->jumlahCash       = $jumlahCash;
-                        $this->jumlahQris       = $jumlahQris;
+                        $this->data = $data;
                     }
-
                     public function collection()
                     {
-                        $data = collect();
-
-                        // Baris judul & periode
-                        $data->push(['Laporan Metode Pembayaran', '', '', '']);
-                        $data->push([$this->judulPeriode, '', '', '']);
-                        $data->push(['', '', '', '']);
-
-                        // Summary
-                        $data->push(['Total Cash', 'Rp ' . number_format($this->totalCash, 0, ',', '.'), $this->jumlahCash . ' transaksi', '']);
-                        $data->push(['Total QRIS', 'Rp ' . number_format($this->totalQris, 0, ',', '.'), $this->jumlahQris . ' transaksi', '']);
-                        $data->push(['Total Keseluruhan', 'Rp ' . number_format($this->totalKeseluruhan, 0, ',', '.'), ($this->jumlahCash + $this->jumlahQris) . ' transaksi', '']);
-                        $data->push(['', '', '', '']);
-
-                        // Data tabel (headings() akan jadi baris ke-8)
-                        foreach ($this->rows as $row) {
-                            $data->push($row);
-                        }
-
-                        // Baris total
-                        $data->push(['', '', 'Total Keseluruhan', 'Rp ' . number_format($this->totalKeseluruhan, 0, ',', '.')]);
-
-                        return $data;
-                    }
-
-                    public function headings(): array
-                    {
-                        return $this->headers;
-                    }
-
-                    public function title(): string
-                    {
-                        return 'Metode Pembayaran';
-                    }
-
-                    public function styles(\PhpOffice\PhpSpreadsheet\Worksheet\Worksheet $sheet)
-                    {
-                        // Baris 1: judul
-                        $sheet->getStyle('A1')->getFont()->setBold(true)->setSize(14);
-                        // Baris 2: periode
-                        $sheet->getStyle('A2')->getFont()->setItalic(true)->setSize(10);
-
-                        // Baris 4-6: label summary bold
-                        $sheet->getStyle('A4:A6')->getFont()->setBold(true);
-                        $sheet->getStyle('B4:B6')->getFont()->setBold(true);
-
-                        // Baris 8: header tabel (WithHeadings mengisi baris 8 karena collection() punya 7 baris sebelum data)
-                        $headerRow = 8;
-                        $sheet->getStyle("A{$headerRow}:D{$headerRow}")->applyFromArray([
-                            'font' => [
-                                'bold'  => true,
-                                'color' => ['argb' => 'FFFFFFFF'],
-                            ],
-                            'fill' => [
-                                'fillType'   => 'solid',
-                                'startColor' => ['argb' => 'FF343A40'],
-                            ],
-                            'alignment' => [
-                                'horizontal' => \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER,
-                            ],
-                        ]);
-
-                        return [];
+                        return collect($this->data);
                     }
                 },
-                'laporan-metode-pembayaran.xlsx'
+                $filename
             );
         }
 
+        // === Export PDF ===
         if ($export === 'pdf') {
             $pdf = Pdf::loadView('laporan.PDF.metode_pdf', compact(
                 'laporan',
-                'judulPeriode',
-                'filter',
                 'totalCash',
                 'totalQris',
                 'totalKeseluruhan',
                 'jumlahCash',
-                'jumlahQris'
+                'jumlahQris',
+                'judulPeriode',
+                'filter'
             ))->setPaper('a4', 'portrait');
-            return $pdf->download('laporan-metode-pembayaran.pdf');
+
+            return $pdf->download('metode-pembayaran.pdf');
         }
 
         return view('laporan.metode', compact(

@@ -13,6 +13,8 @@ class DashboardController extends Controller
     public function index()
     {
 
+        Carbon::setLocale('id');
+
         $today = Carbon::today();
         $month = Carbon::now()->month;
         $year = Carbon::now()->year;
