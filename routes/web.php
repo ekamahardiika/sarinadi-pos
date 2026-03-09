@@ -30,6 +30,7 @@ Route::middleware('auth')->group(function () {
     Route::post('/transaksi/store', [TransaksiController::class,'store'])->name('transaksi.store');
     Route::get('/transaksi/riwayat', [TransaksiController::class,'riwayat'])->name('transaksi.riwayat');
     Route::get('/transaksi/{id}', [TransaksiController::class,'show'])->name('transaksi.show');
+    Route::get('/transaksi/{transaksi}', [TransaksiController::class,'detail'])->name('transaksi.detail');
 
     // Laporan
     Route::get('/laporan/penjualan', [LaporanController::class, 'index'])->name('laporan.penjualan');

@@ -73,7 +73,33 @@ class TransaksiController extends Controller
             $produk->decrement('stok', $jumlah);
         }
 
-        return redirect()->route('transaksi.show', $transaksi->id);
+        if ($request->metode_pembayaran == 'cash') {
+            return redirect()->route('transaksi.show', $transaksi->id);
+        }
+
+        // dd(config('midtrans.serverKey'));
+        \Midtrans\Config::$serverKey = config('midtrans.serverKey');
+        \Midtrans\Config::$isProduction = config('midtrans.isProduction');
+        \Midtrans\Config::$isSanitized = config('midtrans.isSanitized');
+        \Midtrans\Config::$is3ds = config('midtrans.is3ds');
+
+        $params = array(
+            'transaction_details' => array(
+                'order_id' => $transaksi->kode_transaksi,
+                'gross_amount' => $subtotal,
+            ),
+
+        );
+
+        $snapToken = \Midtrans\Snap::getSnapToken($params);
+        $transaksi->snap_token = $snapToken;
+        // dd(config('midtrans'));
+        $transaksi->save();
+
+        return redirect()->route('transaksi.index', $transaksi->id)->with([
+            'snapToken' => $snapToken,
+            'transaksi_id' => $transaksi->id
+            ]);;
     }
 
 
@@ -92,5 +118,12 @@ class TransaksiController extends Controller
         $transaksi = Transaksi::with('detail.produk')->findOrFail($id);
 
         return view('transaksi.detail', compact('transaksi'));
+    }
+
+    public function pay($id)
+    {
+        $transaksi = Transaksi::findOrFail($id);
+
+        return view('transaksi.pay', compact('transaksi'));
     }
 }

@@ -15,9 +15,11 @@ return new class extends Migration
             $table->id();
             $table->string('kode_transaksi')->unique();
             $table->integer('subtotal');
-            $table->enum('metode_pembayaran', ['cash','qris']);
+            $table->enum('metode_pembayaran', ['cash', 'qris']);
             $table->integer('uang_customer')->nullable();
             $table->integer('kembalian')->nullable();
+            $table->string('snap_token')->nullable(); // token snap midtrans
+            $table->string('transaction_status')->default('pending'); // pending, settlement, expire
             $table->timestamps();
         });
     }
