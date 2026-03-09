@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ProdukController;
 use App\Http\Controllers\TransaksiController;
 use Illuminate\Support\Facades\Auth;
+use App\Http\Controllers\LaporanController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -33,10 +34,13 @@ Route::get('/transaksi/{id}', [TransaksiController::class,'show'])->name('transa
 Route::get('/dashboard', [DashboardController::class, 'index'])
     ->name('dashboard.index');
 
-Route::middleware('auth')->group(function () {
-    // Route::get('/dashboard', fn() => view('dashboard.index'));
-    Route::get('/laporan', fn() => view('laporan.index'));
-});
+// Laporan
+Route::get('/laporan/penjualan', [LaporanController::class, 'index'])->name('laporan.penjualan');
+
+// Route::middleware('auth')->group(function () {
+//     // Route::get('/dashboard', fn() => view('dashboard.index'));
+//     Route::get('/laporan', fn() => view('laporan.index'));
+// });
 
 // ❌ HAPUS baris-baris ini (duplikat & tidak passing $produk):
 // Route::get('/produk', function () { return view('produk.index'); })->middleware('auth');
