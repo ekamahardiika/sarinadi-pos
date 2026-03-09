@@ -153,21 +153,26 @@
             border-left-color: #fff;
         }
 
+        .collapse .nav-link {
+            color: #fff;
+            /* text tetap putih */
+        }
+
+        .collapse .nav-link:hover {
+            color: #fff;
+            background: rgba(255, 255, 255, 0.12);
+        }
+
+        .collapse .nav-link.active {
+            color: #fff;
+            background: rgba(255, 255, 255, 0.18);
+            border-left-color: #fff;
+        }
+
         .sidebar-divider {
             border: none;
             border-top: 1px solid rgba(255, 255, 255, 0.15);
             margin: .5rem 1rem;
-        }
-
-        /* ===== DROPDOWN Laporan ===== */
-        .collapse ul.nav {
-            transition: all 0.3s ease;
-        }
-
-        .collapse ul.nav .nav-link {
-            padding-left: 1.5rem;
-            font-size: .85rem;
-            font-weight: 500;
         }
 
         .nav-link.collapsed {
@@ -340,32 +345,35 @@
 
                 <hr class="sidebar-divider">
                 <div class="nav-section-label">Menu Utama</div>
-                <a class="nav-link {{ request()->is('transaksi*') ? 'active' : '' }}"
+                <a class="nav-link {{ request()->is('transaksi') || request()->is('transaksi/buat*') ? 'active' : '' }}"
                     href="{{ url('/transaksi') }}">Transaksi</a>
-                <a class="nav-link {{ request()->is('transaksi-riwayat*') ? 'active' : '' }}"
+
+                <a class="nav-link {{ request()->is('transaksi/riwayat*') ? 'active' : '' }}"
                     href="{{ url('/transaksi/riwayat') }}">Riwayat Transaksi</a>
+                    
                 <a class="nav-link {{ request()->is('produk*') ? 'active' : '' }}"
                     href="{{ url('/produk') }}">Produk</a>
 
                 <hr class="sidebar-divider">
                 <div class="nav-section-label">Laporan</div>
-
-                <a class="nav-link collapsed" href="#laporanDropdown" data-bs-toggle="collapse" aria-expanded="false">
+                @php $laporanActive = request()->is('laporan*'); @endphp
+                <a class="nav-link collapsed {{ $laporanActive ? '' : 'collapsed' }}" href="#laporanDropdown"
+                    data-bs-toggle="collapse" aria-expanded="{{ $laporanActive ? 'true' : 'false' }}">
                     Laporan
                 </a>
-                <div class="collapse" id="laporanDropdown">
+                <div class="collapse {{ $laporanActive ? 'show' : '' }}" id="laporanDropdown">
                     <ul class="nav flex-column ms-3">
                         <li class="nav-item">
-                            <a class="nav-link" href="{{ url('/laporan/penjualan') }}">Penjualan</a>
+                            <a class="nav-link {{ request()->is('laporan/penjualan*') ? 'active' : '' }}"
+                                href="{{ url('/laporan/penjualan') }}">Penjualan</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="{{ url('/laporan/produk-terlaris') }}">Produk Terlaris</a>
+                            <a class="nav-link {{ request()->is('laporan/produk-terlaris*') ? 'active' : '' }}"
+                                href="{{ url('/laporan/produk-terlaris') }}">Produk Terlaris</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="{{ url('/laporan/metode-pembayaran') }}">Metode Pembayaran</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="{{ url('/laporan/stok-produk') }}">Stok Produk</a>
+                            <a class="nav-link {{ request()->is('laporan/metode-pembayaran*') ? 'active' : '' }}"
+                                href="{{ url('/laporan/metode-pembayaran') }}">Metode Pembayaran</a>
                         </li>
                     </ul>
                 </div>

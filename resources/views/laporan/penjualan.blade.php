@@ -73,7 +73,7 @@
                         <tr>
                             <td>{{ $row['no'] }}</td>
                             @if ($filter == 'harian')
-                                <td>{{ $row['kode'] }}</td>
+                                <td>{{ $row['kode_transaksi'] }}</td>
                             @elseif($filter == 'bulanan')
                                 <td>{{ $row['hari'] }}</td>
                             @else
