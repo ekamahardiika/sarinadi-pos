@@ -36,6 +36,8 @@ Route::get('/dashboard', [DashboardController::class, 'index'])
 
 // Laporan
 Route::get('/laporan/penjualan', [LaporanController::class, 'index'])->name('laporan.penjualan');
+Route::get('/laporan/produk-terlaris', [LaporanController::class, 'produkTerlaris'])->name('laporan.produk.terlaris');
+Route::get('/laporan/metode-pembayaran', [LaporanController::class, 'metodePembayaran'])->name('laporan.metode');
 
 // Route::middleware('auth')->group(function () {
 //     // Route::get('/dashboard', fn() => view('dashboard.index'));
