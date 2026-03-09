@@ -13,12 +13,10 @@
                 </select>
             </div>
 
-            <!-- Tanggal untuk harian -->
             <div class="col-md-2 filter-harian">
                 <input type="date" name="date" class="form-control" value="{{ $date ?? '' }}">
             </div>
 
-            <!-- Bulan untuk bulanan -->
             <div class="col-md-2 filter-bulanan">
                 <select name="month" class="form-select">
                     @php
@@ -44,13 +42,11 @@
                 </select>
             </div>
 
-            <!-- Tahun untuk harian/bulanan/tahunan -->
             <div class="col-md-2 filter-year">
                 <input type="number" name="year" min="2000" max="2100" class="form-control"
                     value="{{ $year ?? '' }}">
             </div>
 
-            {{-- Menjadi ini --}}
             <div class="col-md-3">
                 <a id="btnExcel" href="#" class="btn btn-success">Excel</a>
                 <a id="btnPdf" href="#" class="btn btn-danger">PDF</a>
@@ -62,18 +58,34 @@
                 <thead>
                     <tr>
                         <th>No</th>
-                        <th>Tanggal</th>
+                        @if ($filter == 'harian')
+                            <th>Kode Transaksi</th>
+                        @elseif($filter == 'bulanan')
+                            <th>Hari</th>
+                        @else
+                            <th>Bulan</th>
+                        @endif
                         <th>Pendapatan</th>
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach ($laporan as $row)
+                    @forelse($laporan as $row)
                         <tr>
                             <td>{{ $row['no'] }}</td>
-                            <td>{{ $row['tanggal'] }}</td>
+                            @if ($filter == 'harian')
+                                <td>{{ $row['kode'] }}</td>
+                            @elseif($filter == 'bulanan')
+                                <td>{{ $row['hari'] }}</td>
+                            @else
+                                <td>{{ $row['bulan'] }}</td>
+                            @endif
                             <td>Rp {{ number_format($row['pendapatan'], 0, ',', '.') }}</td>
                         </tr>
-                    @endforeach
+                    @empty
+                        <tr class="empty-row">
+                            <td colspan="3" class="text-center">Tidak ada data untuk periode ini</td>
+                        </tr>
+                    @endforelse
                 </tbody>
                 <tfoot>
                     <tr>
@@ -102,44 +114,37 @@
             function updateFilterInputs() {
                 let val = $('select[name="filter"]').val();
                 $('.filter-harian, .filter-bulanan, .filter-year').hide();
-
-                if (val === 'harian') {
-                    $('.filter-harian, .filter-year').show();
-                } else if (val === 'bulanan') {
-                    $('.filter-bulanan, .filter-year').show();
-                } else if (val === 'tahunan') {
-                    $('.filter-year').show();
-                }
+                if (val === 'harian') $('.filter-harian, .filter-year').show();
+                else if (val === 'bulanan') $('.filter-bulanan, .filter-year').show();
+                else $('.filter-year').show();
             }
 
-            // Fungsi update URL tombol export
             function updateExportButtons() {
                 let params = $('#filterForm').serialize();
                 let baseUrl = "{{ route('laporan.penjualan') }}";
-
                 $('#btnExcel').attr('href', baseUrl + '?' + params + '&export=excel');
                 $('#btnPdf').attr('href', baseUrl + '?' + params + '&export=pdf');
             }
 
             $(document).ready(function() {
                 updateFilterInputs();
-                updateExportButtons(); // init saat pertama load
+                updateExportButtons();
                 initDataTable();
 
-                $('select[name="filter"]').change(updateFilterInputs);
+                $('select[name="filter"]').change(function() {
+                    updateFilterInputs();
+                    updateExportButtons();
+                });
 
                 $('#filterForm select, #filterForm input').on('change', function() {
-                    updateExportButtons(); // update URL export setiap filter berubah
-
-                    let data = $('#filterForm').serialize();
+                    updateExportButtons();
                     $.ajax({
                         url: "{{ route('laporan.penjualan') }}",
                         type: 'GET',
-                        data: data,
+                        data: $('#filterForm').serialize(),
                         success: function(res) {
-                            if ($.fn.DataTable.isDataTable('.datatable')) {
-                                $('.datatable').DataTable().destroy();
-                            }
+                            if ($.fn.DataTable.isDataTable('.datatable')) $('.datatable')
+                            .DataTable().destroy();
                             $('#tableWrapper').html($(res).find('#tableWrapper').html());
                             initDataTable();
                         }

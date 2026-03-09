@@ -12,11 +12,9 @@
                     <option value="tahunan" {{ $filter == 'tahunan' ? 'selected' : '' }}>Tahunan</option>
                 </select>
             </div>
-
             <div class="col-md-2 filter-harian" style="display:none;">
                 <input type="date" name="date" class="form-control" value="{{ $date ?? '' }}">
             </div>
-
             <div class="col-md-2 filter-bulanan" style="display:none;">
                 @php
                     $months = [
@@ -36,28 +34,20 @@
                 @endphp
                 <select name="month" class="form-select">
                     @foreach ($months as $num => $name)
-                        <option value="{{ $num }}" {{ $month == $num ? 'selected' : '' }}>{{ $name }}
-                        </option>
+                        <option value="{{ $num }}" {{ $month == $num ? 'selected' : '' }}>{{ $name }}</option>
                     @endforeach
                 </select>
             </div>
-
             <div class="col-md-2 filter-year" style="display:none;">
                 <input type="number" name="year" min="2000" max="2100" class="form-control"
                     value="{{ $year ?? '' }}">
             </div>
-
             <div class="col-md-3">
-                <a id="btnExcel" href="#" class="btn btn-success">
-                    <i class="fas fa-file-excel me-1"></i>Excel
-                </a>
-                <a id="btnPdf" href="#" class="btn btn-danger ms-1">
-                    <i class="fas fa-file-pdf me-1"></i>PDF
-                </a>
+                <a id="btnExcel" href="#" class="btn btn-success">Excel</a>
+                <a id="btnPdf" href="#" class="btn btn-danger ms-1">PDF</a>
             </div>
         </form>
 
-        {{-- Wrapper tabel, diupdate via AJAX --}}
         <div id="tableWrapper">
             <table class="table table-bordered" id="tabelTerlaris">
                 <thead>
@@ -65,6 +55,7 @@
                         <th>No</th>
                         <th>Produk</th>
                         <th>Terjual</th>
+                        <th>Pendapatan</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -73,17 +64,19 @@
                             <td>{{ $row['no'] }}</td>
                             <td>{{ $row['produk'] }}</td>
                             <td>{{ $row['terjual'] }}</td>
+                            <td>Rp {{ number_format($row['pendapatan'], 0, ',', '.') }}</td>
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="3" class="text-center text-muted">Tidak ada data</td>
+                            <td colspan="4" class="text-center text-muted">Tidak ada data</td>
                         </tr>
                     @endforelse
                 </tbody>
                 <tfoot>
                     <tr>
-                        <th colspan="2">Total Terjual</th>
+                        <th colspan="2">Total</th>
                         <th id="totalTerjual">{{ $laporan->sum('terjual') }}</th>
+                        <th id="totalPendapatan">Rp {{ number_format($laporan->sum('pendapatan'), 0, ',', '.') }}</th>
                     </tr>
                 </tfoot>
             </table>
@@ -94,23 +87,14 @@
 @push('scripts')
     <script>
         $(document).ready(function() {
-
-            // ── 1. Tampilkan input sesuai filter ──────────────────────────
             function updateFilterInputs() {
                 var val = $('#filterSelect').val();
-                $('.filter-harian, .filter-bulanan, .filter-year').hide();
-                if (val === 'harian') {
-                    $('.filter-harian, .filter-year').show();
-                }
-                if (val === 'bulanan') {
-                    $('.filter-bulanan, .filter-year').show();
-                }
-                if (val === 'tahunan') {
-                    $('.filter-year').show();
-                }
+                $('.filter-harian,.filter-bulanan,.filter-year').hide();
+                if (val == 'harian') $('.filter-harian,.filter-year').show();
+                if (val == 'bulanan') $('.filter-bulanan,.filter-year').show();
+                if (val == 'tahunan') $('.filter-year').show();
             }
 
-            // ── 2. Update href tombol export ──────────────────────────────
             function updateExportButtons() {
                 var params = $('#filterForm').serialize();
                 var baseUrl = "{{ route('laporan.produk.terlaris') }}";
@@ -118,11 +102,8 @@
                 $('#btnPdf').attr('href', baseUrl + '?' + params + '&export=pdf');
             }
 
-            // ── 3. Init / reinit DataTable ────────────────────────────────
             function initDataTable() {
-                if ($.fn.DataTable.isDataTable('#tabelTerlaris')) {
-                    $('#tabelTerlaris').DataTable().destroy();
-                }
+                if ($.fn.DataTable.isDataTable('#tabelTerlaris')) $('#tabelTerlaris').DataTable().destroy();
                 $('#tabelTerlaris').DataTable({
                     pageLength: 5,
                     lengthMenu: [5, 10, 25, 50],
@@ -139,51 +120,32 @@
                 });
             }
 
-            // ── 4. Fetch data via AJAX & update tabel ─────────────────────
             function fetchData() {
                 var params = $('#filterForm').serialize();
                 var baseUrl = "{{ route('laporan.produk.terlaris') }}";
-
                 $.get(baseUrl, params, function(html) {
                     var $res = $(html);
                     var newTbody = $res.find('#tabelTerlaris tbody').html();
-                    var newTotal = $res.find('#totalTerjual').text();
+                    var newTotalTerjual = $res.find('#totalTerjual').text();
+                    var newTotalPendapatan = $res.find('#totalPendapatan').text();
 
-                    if (!newTbody || !newTbody.trim()) {
-                        newTbody =
-                            '<tr><td colspan="3" class="text-center text-muted">Tidak ada data yang tersedia</td></tr>';
-                    }
-
-                    // Hancurkan DataTable dulu sebelum update DOM
-                    if ($.fn.DataTable.isDataTable('#tabelTerlaris')) {
-                        $('#tabelTerlaris').DataTable().destroy();
-                    }
-
+                    if ($.fn.DataTable.isDataTable('#tabelTerlaris')) $('#tabelTerlaris').DataTable()
+                        .destroy();
                     $('#tabelTerlaris tbody').html(newTbody);
-                    $('#totalTerjual').text(newTotal);
-
+                    $('#totalTerjual').text(newTotalTerjual);
+                    $('#totalPendapatan').text(newTotalPendapatan);
                     initDataTable();
                     updateExportButtons();
                 });
             }
 
-            // ── 5. Event listeners ────────────────────────────────────────
             $('#filterSelect').on('change', function() {
                 updateFilterInputs();
                 fetchData();
             });
-
-            $('#filterForm input, #filterForm select').not('#filterSelect').on('change', function() {
-                fetchData();
-            });
-
-            // ── 6. Init saat halaman pertama load ─────────────────────────
+            $('#filterForm input,#filterForm select').not('#filterSelect').on('change', fetchData);
             updateFilterInputs();
             updateExportButtons();
-
-            // Hapus DataTable dari layout (layouts/admin sudah init .datatable),
-            // kita pakai id spesifik supaya tidak konflik
-            // Pastikan layout TIDAK init #tabelTerlaris (sudah pakai class .datatable di layout)
             initDataTable();
         });
     </script>

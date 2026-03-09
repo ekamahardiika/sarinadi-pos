@@ -22,6 +22,7 @@ class LaporanController extends Controller
         $export = $request->get('export');
 
         $query = Transaksi::query();
+
         if ($filter === 'harian') {
             $query->whereDate('created_at', $date);
         } elseif ($filter === 'bulanan') {
@@ -30,15 +31,42 @@ class LaporanController extends Controller
             $query->whereYear('created_at', $year);
         }
 
-        $transaksis = $query->orderBy('created_at', 'desc')->get();
+        $transaksis = $query->orderBy('created_at', 'asc')->get();
 
-        $laporan = $transaksis->map(function ($t, $index) {
-            return [
-                'no'         => $index + 1,
-                'tanggal'    => $t->created_at->locale('id')->translatedFormat('d F Y'),
-                'pendapatan' => $t->subtotal,
-            ];
-        });
+        $laporan = [];
+
+        if ($filter === 'harian') {
+            // Tampilkan semua transaksi hari itu
+            foreach ($transaksis as $index => $t) {
+                $laporan[] = [
+                    'no'             => $index + 1,
+                    'kode_transaksi' => $t->kode_transaksi, // wajib ada
+                    'pendapatan'     => $t->subtotal,
+                ];
+            }
+        } elseif ($filter === 'bulanan') {
+            // Total pendapatan per hari
+            $grouped = $transaksis->groupBy(fn($t) => $t->created_at->toDateString());
+            $no = 1;
+            foreach ($grouped as $tgl => $items) {
+                $laporan[] = [
+                    'no'       => $no++,
+                    'hari'     => Carbon::parse($tgl)->translatedFormat('d F Y'), // format 08 Maret 2026
+                    'pendapatan' => $items->sum('subtotal'),
+                ];
+            }
+        } else { // tahunan
+            // Total pendapatan per bulan
+            $grouped = $transaksis->groupBy(fn($t) => $t->created_at->format('Y-m'));
+            $no = 1;
+            foreach ($grouped as $bulan => $items) {
+                $laporan[] = [
+                    'no'       => $no++,
+                    'bulan'    => Carbon::parse($bulan . '-01')->translatedFormat('F Y'),
+                    'pendapatan' => $items->sum('subtotal'),
+                ];
+            }
+        }
 
         $totalPendapatan = $transaksis->sum('subtotal');
 
@@ -58,7 +86,7 @@ class LaporanController extends Controller
         ];
 
         $judulPeriode = match ($filter) {
-            'harian'  => 'Periode: ' . Carbon::parse($date)->locale('id')->translatedFormat('d F Y'),
+            'harian'  => 'Periode: ' . Carbon::parse($date)->translatedFormat('d F Y'),
             'bulanan' => 'Periode: ' . ($months[$month] ?? '') . ' ' . $year,
             'tahunan' => 'Periode: Tahun ' . $year,
         };
@@ -75,7 +103,8 @@ class LaporanController extends Controller
             $pdf = Pdf::loadView('laporan.PDF.penjualan_pdf', compact(
                 'laporan',
                 'totalPendapatan',
-                'judulPeriode'
+                'judulPeriode',
+                'filter'
             ))->setPaper('a4', 'portrait');
             return $pdf->download('laporan-penjualan.pdf');
         }
@@ -89,6 +118,7 @@ class LaporanController extends Controller
             'year'
         ));
     }
+
 
     public function produkTerlaris(Request $request)
     {
@@ -113,6 +143,7 @@ class LaporanController extends Controller
         $transaksis = $query->with('detail.produk')->get();
 
         $produkTerlaris = [];
+
         foreach ($transaksis as $t) {
             foreach ($t->detail as $item) {
                 if (!$item->produk) continue;
@@ -120,25 +151,32 @@ class LaporanController extends Controller
                 $id = $item->produk_id;
                 if (!isset($produkTerlaris[$id])) {
                     $produkTerlaris[$id] = [
-                        'produk'  => $item->produk->nama_produk,
-                        'terjual' => 0,
+                        'produk'     => $item->produk->nama_produk,
+                        'terjual'    => 0,
+                        'pendapatan' => 0,
                     ];
                 }
+
                 $produkTerlaris[$id]['terjual'] += $item->jumlah;
+
+                // Jika $item->subtotal kosong, hitung manual
+                $subtotal = $item->total_harga ?? ($item->jumlah * $item->harga_satuan);
+                $produkTerlaris[$id]['pendapatan'] += $subtotal;
             }
         }
 
+        // Urutkan berdasarkan jumlah terjual
         usort($produkTerlaris, fn($a, $b) => $b['terjual'] <=> $a['terjual']);
 
         $laporan = collect(array_values($produkTerlaris))->map(function ($item, $index) {
             return [
-                'no'      => $index + 1,
-                'produk'  => $item['produk'],
-                'terjual' => $item['terjual'],
+                'no'         => $index + 1,
+                'produk'     => $item['produk'],
+                'terjual'    => $item['terjual'],
+                'pendapatan' => $item['pendapatan'],
             ];
         });
 
-        // ✅ Buat judulPeriode untuk PDF
         $months = [
             1 => 'Januari',
             2 => 'Februari',
@@ -155,7 +193,7 @@ class LaporanController extends Controller
         ];
 
         $judulPeriode = match ($filter) {
-            'harian'  => 'Periode: ' . Carbon::parse($date)->locale('id')->translatedFormat('d F Y'),
+            'harian'  => 'Periode: ' . Carbon::parse($date)->translatedFormat('d F Y'),
             'bulanan' => 'Periode: ' . ($months[$month] ?? '') . ' ' . $year,
             'tahunan' => 'Periode: Tahun ' . $year,
         };
@@ -178,17 +216,15 @@ class LaporanController extends Controller
             );
         }
 
-        // ✅ Fix: pakai view PDF baru + kirim $judulPeriode
         if ($export === 'pdf') {
-            $pdf = Pdf::loadView('laporan.PDF.terlaris_pdf', compact(
-                'laporan',
-                'judulPeriode'
-            ))->setPaper('a4', 'portrait');
+            $pdf = Pdf::loadView('laporan.PDF.terlaris_pdf', compact('laporan', 'judulPeriode'))
+                ->setPaper('a4', 'portrait');
             return $pdf->download('produk-terlaris.pdf');
         }
 
         return view('laporan.terlaris', compact('laporan', 'filter', 'date', 'month', 'year'));
     }
+
 
     public function metodePembayaran(Request $request)
     {

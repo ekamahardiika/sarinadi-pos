@@ -4,14 +4,8 @@
 <head>
     <meta charset="UTF-8">
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
         body {
-            font-family: 'Helvetica', sans-serif;
+            font-family: Helvetica, sans-serif;
             font-size: 12px;
             color: #212529;
             padding: 30px 40px;
@@ -46,7 +40,7 @@
 
         thead tr {
             background-color: #343a40;
-            color: #ffffff;
+            color: #fff;
         }
 
         thead th {
@@ -118,36 +112,37 @@
         <p>{{ $judulPeriode }}</p>
     </div>
     <div class="divider"></div>
-
     <table>
         <thead>
             <tr>
                 <th>No</th>
                 <th>Produk</th>
                 <th>Terjual</th>
+                <th>Pendapatan</th>
             </tr>
         </thead>
         <tbody>
-            @forelse ($laporan as $row)
+            @forelse($laporan as $row)
                 <tr>
                     <td>{{ $row['no'] }}</td>
                     <td>{{ $row['produk'] }}</td>
-                    <td>{{ $row['terjual'] }} pcs</td>
+                    <td>{{ $row['terjual'] }}</td>
+                    <td>Rp {{ number_format($row['pendapatan'], 0, ',', '.') }}</td>
                 </tr>
             @empty
                 <tr class="empty-row">
-                    <td colspan="3">Tidak ada data untuk periode ini</td>
+                    <td colspan="4">Tidak ada data</td>
                 </tr>
             @endforelse
         </tbody>
         <tfoot>
             <tr>
-                <th colspan="2">Total Terjual</th>
-                <th>{{ $laporan->sum('terjual') }} pcs</th>
+                <th colspan="2">Total</th>
+                <th>{{ $laporan->sum('terjual') }}</th>
+                <th>Rp {{ number_format($laporan->sum('pendapatan'), 0, ',', '.') }}</th>
             </tr>
         </tfoot>
     </table>
-
     <div class="footer">
         Dicetak pada: {{ \Carbon\Carbon::now()->locale('id')->translatedFormat('d F Y, H:i') }} WIB
     </div>

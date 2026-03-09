@@ -15,7 +15,6 @@
             font-size: 12px;
             color: #212529;
             padding: 30px 40px;
-            /* ← tambah ini */
         }
 
         .header {
@@ -124,7 +123,13 @@
         <thead>
             <tr>
                 <th>No</th>
-                <th>Tanggal</th>
+                @if ($filter == 'harian')
+                    <th>Kode Transaksi</th>
+                @elseif($filter == 'bulanan')
+                    <th>Hari</th>
+                @else
+                    <th>Bulan</th>
+                @endif
                 <th>Pendapatan</th>
             </tr>
         </thead>
@@ -132,7 +137,13 @@
             @forelse ($laporan as $row)
                 <tr>
                     <td>{{ $row['no'] }}</td>
-                    <td>{{ $row['tanggal'] }}</td>
+                    @if ($filter == 'harian')
+                        <td>{{ $row['kode_transaksi'] }}</td>
+                    @elseif($filter == 'bulanan')
+                        <td>{{ $row['hari'] }}</td>
+                    @else
+                        <td>{{ $row['bulan'] }}</td>
+                    @endif
                     <td>Rp {{ number_format($row['pendapatan'], 0, ',', '.') }}</td>
                 </tr>
             @empty
