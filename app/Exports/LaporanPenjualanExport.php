@@ -6,7 +6,6 @@ use Maatwebsite\Excel\Concerns\FromCollection;
 use Maatwebsite\Excel\Concerns\WithHeadings;
 use Maatwebsite\Excel\Concerns\WithMapping;
 use Maatwebsite\Excel\Concerns\WithStyles;
-use Maatwebsite\Excel\Concerns\WithTitle;
 use Maatwebsite\Excel\Concerns\WithColumnWidths;
 use Maatwebsite\Excel\Concerns\WithEvents;
 use Maatwebsite\Excel\Events\AfterSheet;
@@ -14,6 +13,7 @@ use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 use PhpOffice\PhpSpreadsheet\Style\Alignment;
 use PhpOffice\PhpSpreadsheet\Style\Fill;
 use PhpOffice\PhpSpreadsheet\Style\Border;
+use PhpOffice\PhpSpreadsheet\Style\NumberFormat;
 
 class LaporanPenjualanExport implements FromCollection, WithHeadings, WithMapping, WithStyles, WithColumnWidths, WithEvents
 {
@@ -35,14 +35,17 @@ class LaporanPenjualanExport implements FromCollection, WithHeadings, WithMappin
 
     public function headings(): array
     {
-        return ['No', 'Tanggal', 'Pendapatan'];
+        return ['No', 'Tanggal / Hari / Bulan', 'Pendapatan'];
     }
 
     public function map($row): array
     {
+        // Flexibel: gunakan label agar mendukung harian/bulanan/tahunan
+        $label = $row['label'] ?? $row['kode_transaksi'] ?? $row['hari'] ?? $row['bulan'] ?? '';
+
         return [
             $row['no'],
-            $row['tanggal'],
+            $label,
             $row['pendapatan'],
         ];
     }
@@ -59,12 +62,8 @@ class LaporanPenjualanExport implements FromCollection, WithHeadings, WithMappin
     public function styles(Worksheet $sheet)
     {
         return [
-            // Style baris header tabel (baris 3 karena baris 1-2 untuk judul)
-            3 => [
-                'font' => ['bold' => true, 'color' => ['argb' => 'FFFFFFFF']],
-                'fill' => ['fillType' => Fill::FILL_SOLID, 'startColor' => ['argb' => 'FF343A40']],
-                'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER],
-            ],
+            1 => ['font' => ['bold' => true]], // judul
+            2 => ['font' => ['bold' => true]], // header tabel
         ];
     }
 
@@ -73,10 +72,9 @@ class LaporanPenjualanExport implements FromCollection, WithHeadings, WithMappin
         return [
             AfterSheet::class => function (AfterSheet $event) {
                 $sheet = $event->sheet->getDelegate();
-                $lastRow = count($this->data) + 3; // +3 karena judul 2 baris + header
+                $lastRow = count($this->data) + 2; // +2 karena baris 1: judul, baris 2: header
 
                 // ===== JUDUL =====
-                $sheet->insertNewRowBefore(1, 2);
                 $sheet->mergeCells('A1:C1');
                 $sheet->setCellValue('A1', $this->title);
                 $sheet->getStyle('A1')->applyFromArray([
@@ -88,8 +86,15 @@ class LaporanPenjualanExport implements FromCollection, WithHeadings, WithMappin
                 ]);
                 $sheet->getRowDimension(1)->setRowHeight(25);
 
-                // ===== BORDER semua data =====
-                $sheet->getStyle("A3:C{$lastRow}")->applyFromArray([
+                // ===== HEADER =====
+                $sheet->getStyle('A2:C2')->applyFromArray([
+                    'font' => ['bold' => true],
+                    'fill' => ['fillType' => Fill::FILL_SOLID, 'startColor' => ['argb' => 'FFFFFFFF']],
+                    'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER],
+                ]);
+
+                // ===== BORDER SEMUA DATA =====
+                $sheet->getStyle("A2:C{$lastRow}")->applyFromArray([
                     'borders' => [
                         'allBorders' => [
                             'borderStyle' => Border::BORDER_THIN,
@@ -99,7 +104,7 @@ class LaporanPenjualanExport implements FromCollection, WithHeadings, WithMappin
                 ]);
 
                 // ===== FORMAT KOLOM PENDAPATAN =====
-                $sheet->getStyle("C4:C{$lastRow}")->getNumberFormat()
+                $sheet->getStyle("C3:C{$lastRow}")->getNumberFormat()
                     ->setFormatCode('"Rp "#,##0');
 
                 // ===== BARIS TOTAL =====
@@ -108,8 +113,8 @@ class LaporanPenjualanExport implements FromCollection, WithHeadings, WithMappin
                 $sheet->setCellValue("A{$totalRow}", 'Total Pendapatan');
                 $sheet->setCellValue("C{$totalRow}", $this->totalPendapatan);
                 $sheet->getStyle("A{$totalRow}:C{$totalRow}")->applyFromArray([
-                    'font' => ['bold' => true],
-                    'fill' => ['fillType' => Fill::FILL_SOLID, 'startColor' => ['argb' => 'FFF8F9FA']],
+                    'font' => ['bold' => true, 'color' => ['argb' => 'FFFFFFFF']],
+                    'fill' => ['fillType' => Fill::FILL_SOLID, 'startColor' => ['argb' => 'FF000000']],
                     'borders' => [
                         'allBorders' => [
                             'borderStyle' => Border::BORDER_THIN,
@@ -121,7 +126,7 @@ class LaporanPenjualanExport implements FromCollection, WithHeadings, WithMappin
                     ->setFormatCode('"Rp "#,##0');
 
                 // ===== ALIGNMENT =====
-                $sheet->getStyle("A4:A{$totalRow}")->getAlignment()
+                $sheet->getStyle("A3:A{$totalRow}")->getAlignment()
                     ->setHorizontal(Alignment::HORIZONTAL_CENTER);
                 $sheet->getStyle("A{$totalRow}:B{$totalRow}")->getAlignment()
                     ->setHorizontal(Alignment::HORIZONTAL_CENTER);

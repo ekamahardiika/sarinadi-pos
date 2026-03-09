@@ -204,7 +204,13 @@
         <thead>
             <tr>
                 <th>No</th>
-                <th>Tanggal</th>
+                @if ($filter == 'harian')
+                    <th>Kode Transaksi</th>
+                @elseif ($filter == 'bulanan')
+                    <th>Tanggal</th>
+                @else
+                    <th>Bulan</th>
+                @endif
                 <th>Metode</th>
                 <th>Nominal</th>
             </tr>
@@ -213,7 +219,13 @@
             @forelse ($laporan as $row)
                 <tr>
                     <td>{{ $row['no'] }}</td>
-                    <td>{{ $row['tanggal'] }}</td>
+                    @if ($filter == 'harian')
+                        <td>{{ $row['kode_transaksi'] }}</td>
+                    @elseif ($filter == 'bulanan')
+                        <td>{{ $row['tanggal'] }}</td>
+                    @else
+                        <td>{{ $row['bulan'] }}</td>
+                    @endif
                     <td>
                         @if ($row['metode'] === 'CASH')
                             <span class="badge-cash">CASH</span>

@@ -13,11 +13,11 @@
                 </select>
             </div>
 
-            <div class="col-md-2 filter-harian" style="display:none;">
+            <div class="col-md-2 filter-harian">
                 <input type="date" name="date" class="form-control" value="{{ $date ?? '' }}">
             </div>
 
-            <div class="col-md-2 filter-bulanan" style="display:none;">
+            <div class="col-md-2 filter-bulanan">
                 @php
                     $months = [
                         1 => 'Januari',
@@ -42,12 +42,15 @@
                 </select>
             </div>
 
-            <div class="col-md-2 filter-year" style="display:none;">
+            <div class="col-md-2 filter-year">
                 <input type="number" name="year" min="2000" max="2100" class="form-control"
                     value="{{ $year ?? '' }}">
             </div>
 
             <div class="col-md-3">
+                <a id="btnExcel" href="#" class="btn btn-success">
+                    <i class="fas fa-file-excel me-1"></i>Excel
+                </a>
                 <a id="btnPdf" href="#" class="btn btn-danger ms-1">
                     <i class="fas fa-file-pdf me-1"></i>PDF
                 </a>
@@ -108,11 +111,17 @@
 
         {{-- Tabel --}}
         <div id="tableWrapper">
-            <table class="table table-bordered" id="tabelMetode">
+            <table class="table table-bordered datatable" id="tabelMetode">
                 <thead>
                     <tr>
                         <th>No</th>
-                        <th>Tanggal</th>
+                        @if ($filter == 'harian')
+                            <th>Kode Transaksi</th>
+                        @elseif ($filter == 'bulanan')
+                            <th>Tanggal</th>
+                        @else
+                            <th>Bulan</th>
+                        @endif
                         <th>Metode</th>
                         <th>Nominal</th>
                     </tr>
@@ -121,7 +130,13 @@
                     @forelse($laporan as $row)
                         <tr>
                             <td>{{ $row['no'] }}</td>
-                            <td>{{ $row['tanggal'] }}</td>
+                            @if ($filter == 'harian')
+                                <td>{{ $row['kode_transaksi'] }}</td>
+                            @elseif ($filter == 'bulanan')
+                                <td>{{ $row['tanggal'] }}</td>
+                            @else
+                                <td>{{ $row['bulan'] }}</td>
+                            @endif
                             <td>
                                 @if ($row['metode'] === 'CASH')
                                     <span class="badge bg-success">CASH</span>
@@ -146,31 +161,30 @@
             </table>
         </div>
     </div>
-@endsection
 
-@push('scripts')
-    <script>
-        $(document).ready(function() {
-
+    @push('scripts')
+        <script>
             function updateFilterInputs() {
-                var val = $('#filterSelect').val();
+                let val = $('#filterSelect').val();
                 $('.filter-harian, .filter-bulanan, .filter-year').hide();
                 if (val === 'harian') $('.filter-harian, .filter-year').show();
-                if (val === 'bulanan') $('.filter-bulanan, .filter-year').show();
-                if (val === 'tahunan') $('.filter-year').show();
+                else if (val === 'bulanan') $('.filter-bulanan, .filter-year').show();
+                else $('.filter-year').show();
             }
 
             function updateExportButtons() {
-                var params = $('#filterForm').serialize();
-                var baseUrl = "{{ route('laporan.metode') }}";
+                let params = $('#filterForm').serialize();
+                let baseUrl = "{{ route('laporan.metode') }}";
+                $('#btnExcel').attr('href', baseUrl + '?' + params + '&export=excel');
                 $('#btnPdf').attr('href', baseUrl + '?' + params + '&export=pdf');
             }
 
             function initDataTable() {
-                if ($.fn.DataTable.isDataTable('#tabelMetode')) {
-                    $('#tabelMetode').DataTable().destroy();
+                if ($.fn.DataTable.isDataTable('.datatable')) {
+                    $('.datatable').DataTable().destroy();
                 }
-                $('#tabelMetode').DataTable({
+                $('.datatable').DataTable({
+                    retrieve: true,
                     pageLength: 10,
                     lengthMenu: [5, 10, 25, 50],
                     language: {
@@ -186,48 +200,38 @@
                 });
             }
 
-            function fetchData() {
-                var params = $('#filterForm').serialize();
-                var baseUrl = "{{ route('laporan.metode') }}";
+            $(document).ready(function() {
+                updateFilterInputs();
+                updateExportButtons();
+                initDataTable();
 
-                $.get(baseUrl, params, function(html) {
-                    var $res = $(html);
-
-                    // Update tabel
-                    var newTbody = $res.find('#tabelMetode tbody').html();
-                    var newTotal = $res.find('#totalKeseluruhan').text();
-
-                    if (!newTbody || !newTbody.trim()) {
-                        newTbody =
-                            '<tr><td colspan="4" class="text-center text-muted">Tidak ada data</td></tr>';
-                    }
-
-                    if ($.fn.DataTable.isDataTable('#tabelMetode')) {
-                        $('#tabelMetode').DataTable().destroy();
-                    }
-                    $('#tabelMetode tbody').html(newTbody);
-                    $('#totalKeseluruhan').text(newTotal);
-
-                    // Update summary cards
-                    $('#summaryCards').html($res.find('#summaryCards').html());
-
-                    initDataTable();
+                $('#filterSelect').change(function() {
+                    updateFilterInputs();
                     updateExportButtons();
                 });
-            }
 
-            $('#filterSelect').on('change', function() {
-                updateFilterInputs();
-                fetchData();
+                $('#filterForm select, #filterForm input').on('change', function() {
+                    updateExportButtons();
+                    $.ajax({
+                        url: "{{ route('laporan.metode') }}",
+                        type: 'GET',
+                        data: $('#filterForm').serialize(),
+                        success: function(res) {
+                            let $res = $(res);
+
+                            if ($.fn.DataTable.isDataTable('.datatable')) {
+                                $('.datatable').DataTable().destroy();
+                            }
+
+                            $('#tableWrapper').html($res.find('#tableWrapper').html());
+                            $('#summaryCards').html($res.find('#summaryCards').html());
+
+                            initDataTable();
+                            updateExportButtons();
+                        }
+                    });
+                });
             });
-
-            $('#filterForm input, #filterForm select').not('#filterSelect').on('change', function() {
-                fetchData();
-            });
-
-            updateFilterInputs();
-            updateExportButtons();
-            initDataTable();
-        });
-    </script>
-@endpush
+        </script>
+    @endpush
+@endsection
