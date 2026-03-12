@@ -2,7 +2,7 @@
 
 @section('content')
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=DM+Sans:wght@300;400;500;600&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
 
         :root {
             --orange: #d35400;
@@ -18,7 +18,8 @@
 
         body,
         * {
-            font-family: 'DM Sans', sans-serif;
+            font-family: var(--font-body);
+            font-display: var(--font-body);
         }
 
         /* ── HEADER ── */
@@ -50,7 +51,8 @@
         }
 
         .page-title {
-            font-family: 'Playfair Display', serif;
+            font-family: font-family: var(--font-body);
+            font-display: var(--font-body);
             font-size: 1.75rem;
             font-weight: 800;
             color: var(--dark);
@@ -104,7 +106,8 @@
         }
 
         .produk-price {
-            font-family: 'Playfair Display', serif;
+            font-family: font-family: var(--font-body);
+            font-display: var(--font-body);
             font-size: 1rem;
             font-weight: 700;
             color: var(--orange);
@@ -186,7 +189,8 @@
         }
 
         .order-panel-title {
-            font-family: 'Playfair Display', serif;
+            font-family: font-family: var(--font-body);
+            font-display: var(--font-body);
             font-size: 1rem;
             font-weight: 700;
             color: white;
@@ -343,7 +347,8 @@
         }
 
         .summary-row.total .value {
-            font-family: 'Playfair Display', serif;
+            font-family: font-family: var(--font-body);
+            font-display: var(--font-body);
             font-size: 1.2rem;
             color: var(--orange);
         }

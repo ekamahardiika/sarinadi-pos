@@ -93,4 +93,10 @@ class TransaksiController extends Controller
 
         return view('transaksi.detail', compact('transaksi'));
     }
+
+    public function cetak($id)
+    {
+        $transaksi = Transaksi::with('detail.produk')->findOrFail($id);
+        return view('transaksi.cetak', compact('transaksi'));
+    }
 }

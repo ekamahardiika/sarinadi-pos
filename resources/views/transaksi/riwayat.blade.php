@@ -18,7 +18,8 @@
 
         body,
         * {
-            font-family: 'DM Sans', sans-serif;
+            font-family: var(--font-body);
+            font-display: var(--font-body);
         }
 
         /* ── HEADER ── */
@@ -50,7 +51,8 @@
         }
 
         .page-title {
-            font-family: 'Playfair Display', serif;
+            font-family: font-family: var(--font-body);
+            font-display: var(--font-body);
             font-size: 1.75rem;
             font-weight: 800;
             color: var(--dark);
@@ -93,7 +95,8 @@
         }
 
         .table-header-title {
-            font-family: 'Playfair Display', serif;
+            font-family: font-family: var(--font-body);
+            font-display: var(--font-body);
             font-size: 1rem;
             font-weight: 700;
             color: white;
@@ -150,7 +153,8 @@
         }
 
         .total-cell {
-            font-family: 'Playfair Display', serif;
+            font-family: font-family: var(--font-body);
+            font-display: var(--font-body);
             font-weight: 700;
             font-size: 0.95rem;
             color: var(--dark);

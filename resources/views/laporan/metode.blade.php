@@ -19,7 +19,8 @@
 
         body,
         * {
-            font-family: 'DM Sans', sans-serif;
+            font-family: var(--font-body);
+            font-display: var(--font-body);
         }
 
         /* ── HEADER ── */
@@ -51,7 +52,8 @@
         }
 
         .page-title {
-            font-family: 'Playfair Display', serif;
+            font-family: font-family: var(--font-body);
+            font-display: var(--font-body);
             font-size: 1.75rem;
             font-weight: 800;
             color: var(--dark);
@@ -116,7 +118,8 @@
         }
 
         .summary-value {
-            font-family: 'Playfair Display', serif;
+            font-family: font-family: var(--font-body);
+            font-display: var(--font-body);
             font-size: 1.25rem;
             font-weight: 900;
             color: var(--dark);
@@ -292,7 +295,8 @@
         }
 
         .table-header-title {
-            font-family: 'Playfair Display', serif;
+            font-family: font-family: var(--font-body);
+            font-display: var(--font-body);
             font-size: 1rem;
             font-weight: 700;
             color: white;
@@ -360,7 +364,8 @@
         }
 
         .nominal-cell {
-            font-family: 'Playfair Display', serif;
+            font-family: font-family: var(--font-body);
+            font-display: var(--font-body);
             font-weight: 700;
             font-size: 0.92rem;
             color: var(--dark);
@@ -415,7 +420,8 @@
         }
 
         .laporan-table tfoot th.total-number {
-            font-family: 'Playfair Display', serif;
+            font-family: font-family: var(--font-body);
+            font-display: var(--font-body);
             font-size: 1.2rem;
             font-weight: 900;
             color: var(--orange);

@@ -51,7 +51,8 @@
         }
 
         .page-title {
-            font-family: 'Playfair Display', serif;
+            font-family: font-family: var(--font-body);
+            font-display: var(--font-body);
             font-size: 1.75rem;
             font-weight: 800;
             color: var(--dark);
@@ -124,7 +125,8 @@
         }
 
         .img-card-title {
-            font-family: 'Playfair Display', serif;
+            font-family: font-family: var(--font-body);
+            font-display: var(--font-body);
             font-size: 0.88rem;
             font-weight: 700;
             color: white;
@@ -198,7 +200,8 @@
         }
 
         .info-card-title {
-            font-family: 'Playfair Display', serif;
+            font-family: font-family: var(--font-body);
+            font-display: var(--font-body);
             font-size: 0.88rem;
             font-weight: 700;
             color: white;
@@ -251,7 +254,8 @@
         }
 
         .info-row-value.orange {
-            font-family: 'Playfair Display', serif;
+            font-family: font-family: var(--font-body);
+            font-display: var(--font-body);
             font-size: 1.05rem;
             color: var(--orange);
         }
@@ -372,7 +376,8 @@
         }
 
         .modal-danger-title {
-            font-family: 'Playfair Display', serif;
+            font-family: font-family: var(--font-body);
+            font-display: var(--font-body);
             font-size: 1rem;
             font-weight: 700;
             color: white;

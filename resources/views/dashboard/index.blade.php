@@ -2,8 +2,8 @@
 
 @section('content')
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=DM+Sans:wght@300;400;500;600&display=swap');
-
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+        
         :root {
             --orange: #d35400;
             --orange-light: #e8680a;
@@ -18,12 +18,16 @@
             --red: #c0392b;
         }
 
+        * {
+            font-style: normal !important;
+        }
+
         body,
         .main-content,
         #content,
         #content-wrapper,
         #page-content-wrapper {
-            font-family: 'DM Sans', sans-serif !important;
+            font-family: 'Inter', sans-serif !important;
         }
 
         /* ── HEADER ── */
@@ -37,7 +41,7 @@
         }
 
         .dashboard-title {
-            font-family: 'Playfair Display', serif;
+            font-family: 'Inter', sans-serif;
             font-size: 1.8rem;
             font-weight: 800;
             color: var(--dark);
@@ -47,7 +51,7 @@
 
         .dashboard-title em {
             color: var(--orange);
-            font-style: italic;
+            /* font-style: italic; */
         }
 
         .dashboard-date {
@@ -127,7 +131,7 @@
 
         .stat-top {
             display: flex;
-            align-items: flex-start;
+            align-items: center;
             justify-content: space-between;
             margin-bottom: 12px;
         }
@@ -143,6 +147,8 @@
             font-size: 1rem;
             color: var(--orange);
             flex-shrink: 0;
+            align-self: center; 
+            margin-left: 52px;
         }
 
         .stat-card.green .stat-icon-wrap {
@@ -170,7 +176,7 @@
         }
 
         .stat-value {
-            font-family: 'Playfair Display', serif;
+            font-family: 'Inter', sans-serif;
             font-size: 1.65rem;
             font-weight: 900;
             color: var(--dark);
@@ -200,7 +206,7 @@
         }
 
         .chart-title {
-            font-family: 'Playfair Display', serif;
+            font-family: 'Inter', sans-serif;
             font-size: 1.1rem;
             font-weight: 700;
             color: var(--dark);

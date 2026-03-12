@@ -8,8 +8,11 @@
     <title>{{ config('app.name', 'Warung Babi Guling') }}</title>
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link
+    {{-- <link
         href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=DM+Sans:wght@300;400;500;600&display=swap"
+        rel="stylesheet"> --}}
+
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
         rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 
@@ -31,8 +34,11 @@
             --dark-3: #3d2310;
             --sidebar-width: 15rem;
             --topbar-height: 64px;
-            --font-body: 'DM Sans', sans-serif;
-            --font-display: 'Playfair Display', serif;
+            /* --font-body: 'DM Sans', sans-serif;
+            --font-display: font-family: var(--font-body);
+            font-display: var(--font-body); */
+            --font-body: 'Inter', sans-serif;
+            --font-display: 'Inter', sans-serif;
             --text: #3d2b1a;
             --text-light: #8c7060;
             --bg: #f7f3ef;
@@ -46,10 +52,12 @@
             box-sizing: border-box;
             margin: 0;
             padding: 0;
+            font-style: normal !important;
         }
 
         body {
             font-family: var(--font-body);
+            font-display: var(--font-body);
             background: var(--bg);
             color: var(--text);
             overflow-x: hidden;
@@ -114,7 +122,7 @@
             box-shadow: 0 6px 18px rgba(211, 84, 0, 0.4);
         }
 
-        .sidebar-brand-icon img{
+        .sidebar-brand-icon img {
             width: 40px;
             height: 40px;
             object-fit: contain;
