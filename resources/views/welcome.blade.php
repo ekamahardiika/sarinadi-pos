@@ -57,10 +57,15 @@
 
         .nav-logo {
             width: 42px; height: 42px;
-            background: var(--orange);
             border-radius: 50%;
             display: flex; align-items: center; justify-content: center;
             font-size: 1.2rem; color: white;
+        }
+
+        .nav-logo img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
         }
 
         .nav-brand-text {
@@ -137,7 +142,12 @@
         /* ── HERO ── */
         .hero {
             min-height: calc(100vh - 72px);
-            background: var(--dark);
+            background: 
+                linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)),
+                url('/image/BackGround Landing Page.png');
+            background-size: cover;       
+            background-position: center;  
+            background-repeat: no-repeat;
             display: grid;
             grid-template-columns: 1fr 1fr;
             align-items: center;
@@ -163,7 +173,6 @@
             pointer-events: none;
         }
 
-        .hero-deco-1 { top: 5%; left: 42%; font-size: 180px; color: white; transform: rotate(-20deg); }
         .hero-deco-2 { bottom: 5%; left: 5%; font-size: 120px; color: var(--orange); transform: rotate(15deg); }
 
         .hero-left { position: relative; z-index: 1; }
@@ -530,61 +539,6 @@
 
         .btn-dark:hover { background: var(--dark-2); transform: translateY(-2px); }
 
-        /* ── TESTIMONIALS ── */
-        .testi-section { background: var(--gray); }
-
-        .testi-header { text-align: center; margin-bottom: 56px; }
-        .testi-header .section-eyebrow { justify-content: center; }
-        .testi-header .section-eyebrow::before { display: none; }
-
-        .testi-slider { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 24px; }
-
-        .testi-card {
-            background: white;
-            border-radius: 20px;
-            padding: 32px 28px;
-            position: relative;
-            transition: transform 0.3s, box-shadow 0.3s;
-        }
-
-        .testi-card:hover { transform: translateY(-6px); box-shadow: 0 20px 50px rgba(211,84,0,0.1); }
-
-        .testi-card.featured {
-            background: var(--dark);
-            color: white;
-        }
-
-        .testi-stars { color: #ffc107; font-size: 0.9rem; margin-bottom: 16px; letter-spacing: 2px; }
-        .testi-text { font-size: 0.9rem; line-height: 1.75; color: var(--text-light); margin-bottom: 24px; }
-        .testi-card.featured .testi-text { color: rgba(255,255,255,0.7); }
-
-        .testi-author { display: flex; align-items: center; gap: 12px; }
-        .testi-avatar {
-            width: 44px; height: 44px;
-            border-radius: 50%;
-            background: linear-gradient(135deg, var(--orange), #f39c12);
-            display: flex; align-items: center; justify-content: center;
-            color: white; font-weight: 700; font-size: 1rem;
-            flex-shrink: 0;
-        }
-
-        .testi-name { font-weight: 600; font-size: 0.9rem; color: var(--dark); }
-        .testi-card.featured .testi-name { color: white; }
-        .testi-role { font-size: 0.75rem; color: var(--text-light); }
-        .testi-card.featured .testi-role { color: rgba(255,255,255,0.5); }
-
-        .testi-quote-icon {
-            position: absolute; top: 24px; right: 28px;
-            font-size: 2.5rem;
-            opacity: 0.08;
-            font-family: 'Playfair Display', serif;
-            font-weight: 900;
-            line-height: 1;
-            color: var(--orange);
-        }
-
-        .testi-card.featured .testi-quote-icon { color: white; opacity: 0.15; }
-
         /* ── LOKASI ── */
         .lokasi-section { background: white; }
         .lokasi-inner { display: grid; grid-template-columns: 1fr 1.2fr; gap: 60px; align-items: center; }
@@ -770,7 +724,7 @@
     <!-- NAVBAR -->
     <nav class="navbar">
         <a href="#" class="nav-brand">
-            <div class="nav-logo"><i class="fas fa-fire"></i></div>
+            <div class="nav-logo"> <img src="{{ asset('image/logo_sari_nadi_transparent.png') }}" alt="Logo"></div>
             <div class="nav-brand-text">Sari <span>Nadi</span></div>
         </a>
         <ul class="nav-links">
@@ -779,19 +733,18 @@
             <li><a href="#lokasi" data-target="lokasi">Lokasi</a></li>
             <li><a href="#kontak" data-target="kontak">Kontak</a></li>
         </ul>
-        <div class="nav-actions">
+        {{--<div class="nav-actions">
             @if (Route::has('login'))
                 @if (Route::has('register'))
                     <a href="{{ route('register') }}" class="btn-outline">Register</a>
                 @endif
                 <a href="{{ route('login') }}" class="btn-primary">Log in</a>
             @endif
-        </div>
+        </div>--}}
     </nav>
 
     <!-- HERO -->
     <section id="beranda" class="hero">
-        <div class="hero-deco hero-deco-1"><i class="fas fa-leaf"></i></div>
         <div class="hero-deco hero-deco-2"><i class="fas fa-pepper-hot"></i></div>
 
         <div class="hero-left">
@@ -800,7 +753,7 @@
                 Cita Rasa <em>Babi Guling</em><br>Otentik Bali
             </h1>
             <p class="hero-desc fade-up delay-2">
-                Kulit renyah keemasan, daging empuk bumbui rempah pilihan, dan nasi kuning wangi — pengalaman kuliner Bali terbaik sejak 1998.
+                Kulit renyah keemasan, daging empuk dibumbui rempah pilihan, dan tempat yang nyaman — tempat kuliner Bali sejak 1993.
             </p>
             <div class="hero-cta fade-up delay-3">
                 <a href="#menu" class="btn-hero-primary"><i class="fas fa-utensils"></i> Lihat Menu</a>
@@ -825,7 +778,7 @@
         </div>
     </section>
 
-    <!-- STATS STRIP -->
+    {{--<!-- STATS STRIP -->
     <div class="stats-strip">
         <div class="stat-item">
             <span class="stat-num">500+</span>
@@ -846,7 +799,7 @@
             <span class="stat-num">10rb+</span>
             <span class="stat-label">Pelanggan Setia</span>
         </div>
-    </div>
+    </div>--}}
 
     <!-- MENU -->
     <section id="menu" class="dishes-section">
@@ -899,7 +852,7 @@
         </div>
     </section>
 
-    <!-- ABOUT / CHEF -->
+    {{--<!-- ABOUT / CHEF -->
     <section class="about-section" style="padding: 90px 8%;">
         <div class="about-img-wrap">
             <div class="about-img-main">👨‍🍳
@@ -944,55 +897,7 @@
                 <a href="#lokasi" class="btn-dark"><i class="fas fa-map-marker-alt"></i> Kunjungi Kami</a>
             </div>
         </div>
-    </section>
-
-    <!-- TESTIMONIALS -->
-    <section class="testi-section">
-        <div class="testi-header">
-            <div class="section-eyebrow">Ulasan Pelanggan</div>
-            <h2 class="section-title">Apa Kata Mereka?</h2>
-        </div>
-        <div class="testi-slider">
-            <div class="testi-card">
-                <div class="testi-quote-icon">"</div>
-                <div class="testi-stars">★★★★★</div>
-                <p class="testi-text">Babi guling terbaik yang pernah saya coba selama di Bali! Kulitnya super renyah dan dagingnya empuk banget. Pasti balik lagi!</p>
-                <div class="testi-author">
-                    <div class="testi-avatar">A</div>
-                    <div>
-                        <div class="testi-name">Agus Wijaya</div>
-                        <div class="testi-role">Wisatawan Lokal</div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="testi-card">
-                <div class="testi-quote-icon">"</div>
-                <div class="testi-stars">★★★★★</div>
-                <p class="testi-text">Sudah 10 tahun jadi pelanggan setia. Cita rasanya tidak pernah berubah — selalu konsisten dan autentik. Warung favorit keluarga saya.</p>
-                <div class="testi-author">
-                    <div class="testi-avatar" style="background: var(--orange);">M</div>
-                    <div>
-                        <div class="testi-name">Made Suarni</div>
-                        <div class="testi-role">Pelanggan Setia, 10 Tahun</div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="testi-card">
-                <div class="testi-quote-icon">"</div>
-                <div class="testi-stars">★★★★★</div>
-                <p class="testi-text">Recommended banget! Sambal matahnya segar, porsi besar, dan harga sangat terjangkau. Wajib dikunjungi kalau ke Bali!</p>
-                <div class="testi-author">
-                    <div class="testi-avatar" style="background: #c0392b;">S</div>
-                    <div>
-                        <div class="testi-name">Sarah Putri</div>
-                        <div class="testi-role">Food Blogger</div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
+    </section>--}}
 
     <!-- LOKASI -->
     <section id="lokasi" class="lokasi-section">
@@ -1007,27 +912,27 @@
                         <div class="info-icon"><i class="fas fa-map-marker-alt"></i></div>
                         <div>
                             <div class="info-label">Alamat</div>
-                            <div class="info-val">Jl. Raya Sari Nadi, Bali, Indonesia</div>
+                            <div class="info-val">Jl. Diponegoro No.747, Pedungan, Denpasar Selatan, Kota Denpasar, Bali, Indonesia</div>
                         </div>
                     </div>
                     <div class="info-row">
                         <div class="info-icon"><i class="fas fa-clock"></i></div>
                         <div>
                             <div class="info-label">Jam Buka</div>
-                            <div class="info-val">Setiap Hari: 07.00 – Habis</div>
+                            <div class="info-val">Setiap Hari: 07.00 – 19.00</div>
                         </div>
                     </div>
                     <div class="info-row">
                         <div class="info-icon"><i class="fas fa-phone"></i></div>
                         <div>
                             <div class="info-label">Telepon / WhatsApp</div>
-                            <div class="info-val">+62 812-3456-7890</div>
+                            <div class="info-val">+62 813-3729-0894</div>
                         </div>
                     </div>
                 </div>
 
                 <div style="margin-top: 32px;">
-                    <a href="https://maps.google.com" target="_blank" class="btn-orange" style="display: inline-flex;">
+                    <a href="https://maps.app.goo.gl/B7pak8hQDXgmFd2R6" target="_blank" class="btn-orange" style="display: inline-flex;">
                         <i class="fas fa-directions"></i> Petunjuk Arah
                     </a>
                 </div>
@@ -1055,23 +960,23 @@
 
             <div class="kontak-channels">
                 <h3 style="color: rgba(255,255,255,0.6); font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 8px;">Hubungi Langsung</h3>
-                <a href="https://wa.me/6281234567890" class="channel-card" target="_blank">
+                <a href="https://wa.me/6281337290894" class="channel-card" target="_blank">
                     <div class="channel-icon ch-wa"><i class="fab fa-whatsapp"></i></div>
                     <div class="channel-info">
                         <div class="channel-name">WhatsApp</div>
-                        <div class="channel-val">+62 812-3456-7890</div>
+                        <div class="channel-val">+62 813-3729-0894</div>
                     </div>
                     <i class="fas fa-chevron-right channel-arrow"></i>
                 </a>
-                <a href="https://instagram.com" class="channel-card" target="_blank">
+                <a href="https://www.instagram.com/sarinadi_warung?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw==" class="channel-card" target="_blank">
                     <div class="channel-icon ch-ig"><i class="fab fa-instagram"></i></div>
                     <div class="channel-info">
                         <div class="channel-name">Instagram</div>
-                        <div class="channel-val">@warungbabigulingsarinadi</div>
+                        <div class="channel-val">@sarinadiwarung</div>
                     </div>
                     <i class="fas fa-chevron-right channel-arrow"></i>
                 </a>
-                <a href="#" class="channel-card">
+                <a href="https://r.grab.com/g/6-20260310_004654_669426ff7d3c4cc4b51ec1b034af63d5_MEXMPS-6-C25TGXVXABTBA6" class="channel-card">
                     <div class="channel-icon ch-grab"><i class="fas fa-motorcycle"></i></div>
                     <div class="channel-info">
                         <div class="channel-name">GrabFood</div>

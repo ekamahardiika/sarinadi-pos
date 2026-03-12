@@ -105,7 +105,6 @@
         .sidebar-brand-icon {
             width: 44px;
             height: 44px;
-            background: var(--orange);
             border-radius: 12px;
             display: flex;
             align-items: center;
@@ -113,6 +112,12 @@
             font-size: 1.2rem;
             flex-shrink: 0;
             box-shadow: 0 6px 18px rgba(211, 84, 0, 0.4);
+        }
+
+        .sidebar-brand-icon img{
+            width: 40px;
+            height: 40px;
+            object-fit: contain;
         }
 
         .sidebar-brand-text .title {
@@ -701,7 +706,7 @@
         <div id="sidebar-wrapper">
             <a class="sidebar-brand" href="{{ url('/') }}">
                 <div class="sidebar-brand-icon">
-                    <i class="fas fa-fire"></i>
+                    <img src="{{ asset('image/logo_sari_nadi_transparent.png') }}" alt="Logo">
                 </div>
                 <div class="sidebar-brand-text">
                     <span class="title">Sari <span>Nadi</span></span>

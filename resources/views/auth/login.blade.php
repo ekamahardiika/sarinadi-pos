@@ -113,6 +113,12 @@
             box-shadow: 0 8px 25px rgba(211, 84, 0, 0.4);
         }
 
+        .auth-logo img {
+            width: 40px;
+            height: 40px;
+            object-fit: contain;
+        }
+
         .auth-brand {
             font-family: 'Playfair Display', serif;
             font-size: 1.1rem;
@@ -380,7 +386,7 @@
 
             <!-- Header -->
             <div class="auth-card-header">
-                <div class="auth-logo"><i class="fas fa-fire"></i></div>
+                <div class="auth-logo"><img src="{{ asset('image/logo_sari_nadi_transparent.png') }}" alt="Logo"></div>
                 <div class="auth-brand">Sari <span>Nadi</span></div>
                 <div class="auth-subtitle">Warung Babi Guling Khas Bali</div>
             </div>
