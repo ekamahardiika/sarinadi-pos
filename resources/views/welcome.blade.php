@@ -371,50 +371,69 @@
             position: relative;
             width: 100%;
             max-width: 520px;
+            overflow: visible;
         }
 
         .hero-img-main {
-            width: 78%;
+            width: 90%;
             aspect-ratio: 4/5;
             object-fit: cover;
-            border-radius: 20px;
             display: block;
-            margin-left: auto;
-            box-shadow: 0 30px 80px rgba(0, 0, 0, 0.6);
-            background: linear-gradient(135deg, #8B4513, #d35400);
             position: relative;
-            overflow: hidden;
+            overflow: visible;
         }
 
         .hero-img-main::after {
-            content: '🍖';
             position: absolute;
-            top: 50%;
+            top:50%;
             left: 50%;
             transform: translate(-50%, -50%);
             font-size: 6rem;
         }
 
+        .hero-img-main img {
+            margin-top: 50px ;
+            width: 130%;
+            height: 85%;
+            border-radius: 40px;
+            /* object-fit: contain; */
+            filter: drop-shadow(0px 20px 30px rgba(0, 0, 0, 0.6));
+            animation: float 5s ease-in-out infinite;
+        }
+
         .hero-img-float {
             position: absolute;
-            bottom: 30px;
-            left: 0;
+            bottom: -45px;
+            left: -60px;
             width: 55%;
             aspect-ratio: 1;
             border-radius: 16px;
-            background: linear-gradient(135deg, #c0392b, #8B0000);
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
-            overflow: hidden;
+            /* box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5); */
+            /* overflow: hidden; */
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 4rem;
+            font-size: 0.1rem;
+        }
+
+        .hero-img-float img {
+            margin-top: 200px ;
+            width: 130%;
+            height: 130%;
+            object-fit: contain;
+            filter: drop-shadow(0px 20px 30px rgba(0, 0, 0, 0.6));
+            animation: spinPlate 80s linear infinite;
+        }
+
+        @keyframes spinPlate {
+            from { transform: rotate(0deg); }
+            to   { transform: rotate(360deg); }
         }
 
         .hero-badge {
             position: absolute;
-            top: 30px;
-            right: -10px;
+            top: 20px;
+            right: -80px;
             background: var(--orange);
             color: white;
             padding: 16px;
@@ -1162,8 +1181,8 @@
 
         <div class="hero-right fade-up delay-2">
             <div class="hero-img-wrap">
-                <div class="hero-img-main"></div>
-                <div class="hero-img-float">🍖</div>
+                <div class="hero-img-main"><img src="{{ asset('image/Lokasi Warung.png') }}"></div>
+                <div class="hero-img-float"><img src="{{ asset('image/Babi Guling.png') }}"></div>
                 <div class="hero-badge">
                     <span class="hero-badge-num">25+</span>
                     <span class="hero-badge-text">Tahun<br>Melayani</span>
