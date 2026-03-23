@@ -1,5 +1,7 @@
 @extends('layouts.admin')
 
+@section('title', 'Produk Terlaris')
+
 @section('content')
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=DM+Sans:wght@300;400;500;600&display=swap');
@@ -621,24 +623,32 @@
             }
 
             function fetchData() {
-                var params = $('#filterForm').serialize();
-                var baseUrl = "{{ route('laporan.produk.terlaris') }}";
-                $.get(baseUrl, params, function(html) {
-                    var $res = $(html);
-                    var newTbody = $res.find('#tabelTerlaris tbody').html();
-                    var newTotalTerjual = $res.find('#totalTerjual').text();
-                    var newTotalPendapatan = $res.find('#totalPendapatan').text();
+    var params = $('#filterForm').serialize();
+    var baseUrl = "{{ route('laporan.produk.terlaris') }}";
+    $.get(baseUrl, params, function(html) {
+        var $res = $(html);
+        var newTbody = $res.find('#tabelTerlaris tbody').html();
+        var newTotalTerjual = $res.find('#totalTerjual').text();
+        var newTotalPendapatan = $res.find('#totalPendapatan').text();
 
-                    if ($.fn.DataTable.isDataTable('#tabelTerlaris')) {
-                        $('#tabelTerlaris').DataTable().destroy();
-                    }
-                    $('#tabelTerlaris tbody').html(newTbody);
-                    $('#totalTerjual').text(newTotalTerjual);
-                    $('#totalPendapatan').text(newTotalPendapatan);
-                    initDataTable();
-                    updateExportButtons();
-                });
-            }
+        // Destroy dulu SEBELUM ubah DOM
+        if ($.fn.DataTable.isDataTable('#tabelTerlaris')) {
+            $('#tabelTerlaris').DataTable().destroy();
+        }
+
+        $('#tabelTerlaris tbody').html(newTbody);
+        $('#totalTerjual').text(newTotalTerjual);
+        $('#totalPendapatan').text(newTotalPendapatan);
+
+        // Cek apakah data kosong — kalau kosong, jangan init DataTable
+        var isEmpty = $('#tabelTerlaris tbody tr.empty-row').length > 0;
+        if (!isEmpty) {
+            initDataTable();
+        }
+
+        updateExportButtons();
+    });
+}
 
             $('#filterSelect').on('change', function() {
                 updateFilterInputs();

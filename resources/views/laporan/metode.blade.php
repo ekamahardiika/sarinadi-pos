@@ -1,5 +1,7 @@
 @extends('layouts.admin')
 
+@section('title', 'Metode Pembayaran')
+
 @section('content')
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=DM+Sans:wght@300;400;500;600&display=swap');
@@ -721,6 +723,10 @@
             if ($.fn.DataTable.isDataTable('.datatable')) {
                 $('.datatable').DataTable().destroy();
             }
+
+            // Tambahkan baris ini
+            if ($('.datatable tbody tr.empty-row').length > 0) return;
+            
             $('.datatable').DataTable({
                 retrieve: true,
                 pageLength: 10,
