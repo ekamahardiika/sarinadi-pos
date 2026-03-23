@@ -396,9 +396,8 @@
             width: 130%;
             height: 85%;
             border-radius: 40px;
-            /* object-fit: contain; */
-            filter: drop-shadow(0px 20px 30px rgba(0, 0, 0, 0.6));
             animation: float 5s ease-in-out infinite;
+            filter: brightness(0.7);
         }
 
         .hero-img-float {
@@ -598,6 +597,13 @@
             font-size: 4rem;
             position: relative;
             overflow: hidden;
+        }
+
+        .dish-img img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;   
+            border-radius: 12px; 
         }
 
         .dish-price-badge {
@@ -1145,14 +1151,6 @@
             <li><a href="#lokasi" data-target="lokasi">Lokasi</a></li>
             <li><a href="#kontak" data-target="kontak">Kontak</a></li>
         </ul>
-        {{-- <div class="nav-actions">
-            @if (Route::has('login'))
-                @if (Route::has('register'))
-                    <a href="{{ route('register') }}" class="btn-outline">Register</a>
-                @endif
-                <a href="{{ route('login') }}" class="btn-primary">Log in</a>
-            @endif
-        </div> --}}
     </nav>
 
     <!-- HERO -->
@@ -1172,11 +1170,6 @@
                 <a href="#menu" class="btn-hero-primary"><i class="fas fa-utensils"></i> Lihat Menu</a>
                 <a href="#lokasi" class="btn-hero-secondary">Temukan Kami</a>
             </div>
-            {{-- <div class="hero-socials fade-up delay-4 px-0">
-                <a href="#" class="social-circle"><i class="fab fa-facebook-f"></i></a>
-                <a href="#" class="social-circle"><i class="fab fa-instagram"></i></a>
-                <a href="#" class="social-circle"><i class="fab fa-whatsapp"></i></a>
-            </div> --}}
         </div>
 
         <div class="hero-right fade-up delay-2">
@@ -1191,28 +1184,6 @@
         </div>
     </section>
 
-    {{-- <!-- STATS STRIP -->
-    <div class="stats-strip">
-        <div class="stat-item">
-            <span class="stat-num">500+</span>
-            <span class="stat-label">Porsi / Hari</span>
-        </div>
-        <div class="stat-divider"></div>
-        <div class="stat-item">
-            <span class="stat-num">4.9★</span>
-            <span class="stat-label">Rating Google</span>
-        </div>
-        <div class="stat-divider"></div>
-        <div class="stat-item">
-            <span class="stat-num">25+</span>
-            <span class="stat-label">Tahun Pengalaman</span>
-        </div>
-        <div class="stat-divider"></div>
-        <div class="stat-item">
-            <span class="stat-num">10rb+</span>
-            <span class="stat-label">Pelanggan Setia</span>
-        </div>
-    </div> --}}
 
     <!-- MENU -->
     <section id="menu" class="dishes-section">
@@ -1226,94 +1197,52 @@
         <!-- FIX 1: 2×2 grid, max-width + margin:auto → centered & balanced -->
         <div class="dishes-grid">
             <div class="dish-card">
-                <div class="dish-img">🍛
-                    <div class="dish-price-badge">Rp 45rb</div>
+                <div class="dish-img">
+                    <img src="image/Paket Campur.png">
+                    <div class="dish-price-badge">Rp 25rb</div>
                 </div>
                 <div class="dish-body">
-                    <div class="dish-name">Paket Prima</div>
-                    <div class="dish-desc">Nasi kuning, babi guling, sate lilit, urutan, dan sambal matah segar.</div>
+                    <div class="dish-name">Paket Campur</div>
+                    <div class="dish-desc">Nasi putih, babi guling, lawar, sate lilit, urutan, dan sambal matah segar. Cocok untuk makan siang ringan</div>
                 </div>
             </div>
 
             <div class="dish-card">
-                <div class="dish-img" style="background: linear-gradient(135deg, #c0392b, #d35400);">🍱
-                    <div class="dish-price-badge">Rp 30rb</div>
+                <div class="dish-img">
+                    <img src="image/Paket Pisah.png">
+                    <div class="dish-price-badge">Rp 40rb</div>
                 </div>
                 <div class="dish-body">
-                    <div class="dish-name">Paket Jajan</div>
-                    <div class="dish-desc">Nasi, babi guling, dan sambal matah. Cocok untuk makan siang ringan.</div>
+                    <div class="dish-name">Paket Pisah</div>
+                    <div class="dish-desc">Nasi putih, babi guling, lawar, sate lilit, sambal matah, dan kuah.</div>
                 </div>
             </div>
 
             <div class="dish-card">
-                <div class="dish-img" style="background: linear-gradient(135deg, #8B4513, #c0392b);">🍢
-                    <div class="dish-price-badge">Rp 20rb</div>
+                <div class="dish-img">
+                    <img src="image/Daging.png">
+                    <div class="dish-price-badge">Rp 25rb</div>
                 </div>
                 <div class="dish-body">
-                    <div class="dish-name">Sate Lilit</div>
-                    <div class="dish-desc">Sate khas Bali dari ikan tenggiri dan daging cincang bumbu rempah pilihan.
+                    <div class="dish-name">Daging Babi</div>
+                    <div class="dish-desc">Daging babi guling juicy dengan bumbu yang meresap dari rempah pilihan.
                     </div>
                 </div>
             </div>
 
             <div class="dish-card">
-                <div class="dish-img" style="background: linear-gradient(135deg, #d35400, #f39c12);">🥩
-                    <div class="dish-price-badge">Rp 35rb</div>
+                <div class="dish-img">
+                    <img src="image/Sate Lilit.png">
+                    <div class="dish-price-badge">Rp 20rb</div>
                 </div>
                 <div class="dish-body">
-                    <div class="dish-name">Babi Guling Porsi</div>
-                    <div class="dish-desc">Kulit renyah dan daging empuk babi guling dengan lawar dan urutan.</div>
+                    <div class="dish-name">Sate Lilit</div>
+                    <div class="dish-desc">Sate khas Bali yang dibuat dari daging babi cincang, lalu dililit pada batang bambu pipih.</div>
                 </div>
             </div>
         </div>
     </section>
 
-    {{-- <!-- ABOUT / CHEF -->
-    <section class="about-section" style="padding: 90px 8%;">
-        <div class="about-img-wrap">
-            <div class="about-img-main">👨‍🍳
-                <div class="about-accent"></div>
-            </div>
-            <div class="about-card-float">
-                <div class="num">98%</div>
-                <div class="lbl">Kepuasan<br>Pelanggan</div>
-            </div>
-        </div>
-        <div class="about-right">
-            <div class="section-eyebrow">Tentang Kami</div>
-            <h2 class="section-title">Warung Dengan Hati, Masakan Dengan Jiwa</h2>
-            <p class="section-desc">Berdiri sejak 1998, Sari Nadi menjaga resep rahasia keluarga untuk menghadirkan babi guling paling otentik di Bali. Setiap bumbu dipilih segar setiap pagi.</p>
-
-            <div class="about-features">
-                <div class="about-feat">
-                    <div class="feat-icon"><i class="fas fa-leaf"></i></div>
-                    <div>
-                        <div class="feat-title">Bumbu Segar Setiap Hari</div>
-                        <div class="feat-desc">Rempah dipilih dan diracik setiap pagi untuk menjaga kesegaran cita rasa khas Bali.</div>
-                    </div>
-                </div>
-                <div class="about-feat">
-                    <div class="feat-icon"><i class="fas fa-fire"></i></div>
-                    <div>
-                        <div class="feat-title">Resep Turun-Temurun</div>
-                        <div class="feat-desc">Teknik memasak tradisional Bali yang dijaga keasliannya selama lebih dari 25 tahun.</div>
-                    </div>
-                </div>
-                <div class="about-feat">
-                    <div class="feat-icon"><i class="fas fa-award"></i></div>
-                    <div>
-                        <div class="feat-title">Penghargaan Kuliner Bali</div>
-                        <div class="feat-desc">Diakui sebagai salah satu warung babi guling terbaik di Bali oleh berbagai media.</div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="about-cta">
-                <a href="#menu" class="btn-orange"><i class="fas fa-utensils"></i> Lihat Menu</a>
-                <a href="#lokasi" class="btn-dark"><i class="fas fa-map-marker-alt"></i> Kunjungi Kami</a>
-            </div>
-        </div>
-    </section> --}}
 
     <!-- LOKASI -->
     <section id="lokasi" class="lokasi-section">
@@ -1373,12 +1302,7 @@
             <div>
                 <div class="section-eyebrow" style="color: rgba(255,255,255,0.5);">Tetap Terhubung</div>
                 <h2 class="kontak-cta-title">Dapatkan <em>Promo</em> &amp; Info Terbaru</h2>
-                <p class="kontak-desc">Ikuti kami untuk mendapatkan promo spesial, menu baru, dan info event langsung!
-                </p>
-                {{-- <div class="newsletter-form">
-                    <input type="email" placeholder="Masukkan email Anda...">
-                    <button type="button">Subscribe</button>
-                </div> --}}
+                <p class="kontak-desc">Ikuti kami untuk mendapatkan promo spesial, menu baru, dan info event langsung! </p>
             </div>
 
             <div class="kontak-channels">

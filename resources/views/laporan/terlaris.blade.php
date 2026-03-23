@@ -510,7 +510,7 @@
             </div>
 
             <div id="tableWrapper">
-                <table class="laporan-table datatable" id="tabelTerlaris">
+                <table class="laporan-table" id="tabelTerlaris">
                     <thead>
                         <tr>
                             <th width="50">No</th>

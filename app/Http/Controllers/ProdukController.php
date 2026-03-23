@@ -25,7 +25,7 @@ class ProdukController extends Controller
             'nama_produk' => 'required',
             'harga' => 'required|numeric',
             'stok' => 'required|numeric',
-            'gambar' => 'nullable|image|mimes:jpg,jpeg,png'
+            'gambar' => 'nullable|image|mimes:jpg,jpeg,png|max:2048'
         ]);
 
         if ($request->hasFile('gambar')) {
@@ -44,29 +44,31 @@ class ProdukController extends Controller
     }
 
     public function update(Request $request, $id)
-    {
-        $produk = Produk::findOrFail($id);
+{
+    
+    $produk = Produk::findOrFail($id);
 
-        $data = $request->validate([
-            'nama_produk' => 'required',
-            'harga' => 'required|numeric',
-            'stok' => 'required|numeric',
-            'gambar' => 'nullable|image'
-        ]);
+    $data = $request->validate([
+        'nama_produk' => 'required',
+        'harga' => 'required|numeric',
+        'stok' => 'required|numeric',
+        'gambar' => 'nullable|image|mimes:jpg,jpeg,png|max:2048'
+    ]);
 
-        if ($request->hasFile('gambar')) {
-
-            if ($produk->gambar) {
-                Storage::disk('public')->delete($produk->gambar);
-            }
-
-            $data['gambar'] = $request->file('gambar')->store('produk','public');
+    if ($request->hasFile('gambar')) {
+        if ($produk->gambar) {
+            Storage::disk('public')->delete($produk->gambar);
         }
-
-        $produk->update($data);
-
-        return redirect()->route('produk.index')->with('success','Produk berhasil diupdate');
+        $data['gambar'] = $request->file('gambar')->store('produk', 'public');
+    } else {
+        // ✅ Hapus key 'gambar' dari $data supaya tidak menimpa gambar lama
+        unset($data['gambar']);
     }
+
+    $produk->update($data);
+
+    return redirect()->route('produk.index')->with('success', 'Produk berhasil diupdate');
+}
 
     public function destroy($id)
     {

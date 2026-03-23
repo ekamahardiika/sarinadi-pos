@@ -838,17 +838,14 @@
     <script>
         $(document).ready(function() {
             $('.datatable').DataTable({
+                if (!$.fn.DataTable.isDataTable(this)) { // ← tambah pengecekan ini
+            $(this).DataTable({
                 pageLength: 5,
                 lengthMenu: [5, 10, 25, 50],
-                language: {
-                    search: "Cari:",
-                    lengthMenu: "Tampilkan _MENU_ data",
-                    info: "Menampilkan _START_ - _END_ dari _TOTAL_ data",
-                    paginate: {
-                        previous: "Prev",
-                        next: "Next"
-                    }
-                }
+                language: { ... }
+            });
+        }
+
             });
         });
 
