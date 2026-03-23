@@ -1,5 +1,7 @@
 @extends('layouts.app')
 
+@section('title', 'Register')
+
 @section('content')
 <style>
     @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=DM+Sans:wght@300;400;500;600&display=swap');
@@ -87,6 +89,12 @@
         margin: 0 auto 16px;
         box-shadow: 0 8px 25px rgba(211,84,0,0.4);
     }
+
+    .auth-logo img {
+            width: 40px;
+            height: 40px;
+            object-fit: contain;
+        }
 
     .auth-brand {
         font-family: 'Playfair Display', serif;
@@ -251,7 +259,7 @@
 
         <!-- Header -->
         <div class="auth-card-header">
-            <div class="auth-logo"><i class="fas fa-fire"></i></div>
+            <div class="auth-logo"><img src="{{ asset('image/logo_sari_nadi_transparent.png') }}" alt="Logo"></div>
             <div class="auth-brand">Sari <span>Nadi</span></div>
             <div class="auth-subtitle">Warung Babi Guling Khas Bali</div>
         </div>

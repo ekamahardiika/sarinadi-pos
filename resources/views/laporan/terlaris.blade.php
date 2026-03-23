@@ -1,5 +1,7 @@
 @extends('layouts.admin')
 
+@section('title', 'Produk Terlaris')
+
 @section('content')
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=DM+Sans:wght@300;400;500;600&display=swap');
@@ -18,7 +20,8 @@
 
         body,
         * {
-            font-family: 'DM Sans', sans-serif;
+            font-family: var(--font-body);
+            font-display: var(--font-body);
         }
 
         /* ── HEADER ── */
@@ -50,7 +53,8 @@
         }
 
         .page-title {
-            font-family: 'Playfair Display', serif;
+            font-family: font-family: var(--font-body);
+            font-display: var(--font-body);
             font-size: 1.75rem;
             font-weight: 800;
             color: var(--dark);
@@ -198,7 +202,8 @@
         }
 
         .table-header-title {
-            font-family: 'Playfair Display', serif;
+            font-family: font-family: var(--font-body);
+            font-display: var(--font-body);
             font-size: 1rem;
             font-weight: 700;
             color: white;
@@ -266,7 +271,8 @@
         }
 
         .terjual-cell {
-            font-family: 'Playfair Display', serif;
+            font-family: font-family: var(--font-body);
+            font-display: var(--font-body);
             font-weight: 700;
             font-size: 0.92rem;
             color: var(--dark);
@@ -286,7 +292,8 @@
         }
 
         .pendapatan-cell {
-            font-family: 'Playfair Display', serif;
+            font-family: font-family: var(--font-body);
+            font-display: var(--font-body);
             font-weight: 700;
             font-size: 0.92rem;
             color: var(--dark);
@@ -343,7 +350,8 @@
         }
 
         .laporan-table tfoot th.total-number {
-            font-family: 'Playfair Display', serif;
+            font-family: font-family: var(--font-body);
+            font-display: var(--font-body);
             font-size: 1.2rem;
             font-weight: 900;
             color: var(--orange);
@@ -504,7 +512,7 @@
             </div>
 
             <div id="tableWrapper">
-                <table class="laporan-table datatable" id="tabelTerlaris">
+                <table class="laporan-table" id="tabelTerlaris">
                     <thead>
                         <tr>
                             <th width="50">No</th>
@@ -615,24 +623,32 @@
             }
 
             function fetchData() {
-                var params = $('#filterForm').serialize();
-                var baseUrl = "{{ route('laporan.produk.terlaris') }}";
-                $.get(baseUrl, params, function(html) {
-                    var $res = $(html);
-                    var newTbody = $res.find('#tabelTerlaris tbody').html();
-                    var newTotalTerjual = $res.find('#totalTerjual').text();
-                    var newTotalPendapatan = $res.find('#totalPendapatan').text();
+    var params = $('#filterForm').serialize();
+    var baseUrl = "{{ route('laporan.produk.terlaris') }}";
+    $.get(baseUrl, params, function(html) {
+        var $res = $(html);
+        var newTbody = $res.find('#tabelTerlaris tbody').html();
+        var newTotalTerjual = $res.find('#totalTerjual').text();
+        var newTotalPendapatan = $res.find('#totalPendapatan').text();
 
-                    if ($.fn.DataTable.isDataTable('#tabelTerlaris')) {
-                        $('#tabelTerlaris').DataTable().destroy();
-                    }
-                    $('#tabelTerlaris tbody').html(newTbody);
-                    $('#totalTerjual').text(newTotalTerjual);
-                    $('#totalPendapatan').text(newTotalPendapatan);
-                    initDataTable();
-                    updateExportButtons();
-                });
-            }
+        // Destroy dulu SEBELUM ubah DOM
+        if ($.fn.DataTable.isDataTable('#tabelTerlaris')) {
+            $('#tabelTerlaris').DataTable().destroy();
+        }
+
+        $('#tabelTerlaris tbody').html(newTbody);
+        $('#totalTerjual').text(newTotalTerjual);
+        $('#totalPendapatan').text(newTotalPendapatan);
+
+        // Cek apakah data kosong — kalau kosong, jangan init DataTable
+        var isEmpty = $('#tabelTerlaris tbody tr.empty-row').length > 0;
+        if (!isEmpty) {
+            initDataTable();
+        }
+
+        updateExportButtons();
+    });
+}
 
             $('#filterSelect').on('change', function() {
                 updateFilterInputs();

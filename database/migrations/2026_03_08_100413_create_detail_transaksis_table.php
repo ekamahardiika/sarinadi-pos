@@ -6,15 +6,13 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
     public function up(): void
     {
         Schema::create('detail_transaksis', function (Blueprint $table) {
             $table->id();
             $table->foreignId('transaksi_id')->constrained('transaksis')->cascadeOnDelete();
-            $table->foreignId('produk_id')->constrained('produks');
+            $table->foreignId('produk_id')->nullable()->constrained('produks')->nullOnDelete();
+            $table->string('nama_produk');
             $table->integer('jumlah');
             $table->integer('harga_satuan');
             $table->integer('total_harga');
@@ -22,9 +20,6 @@ return new class extends Migration
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
         Schema::dropIfExists('detail_transaksis');

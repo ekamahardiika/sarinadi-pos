@@ -1,5 +1,7 @@
 @extends('layouts.admin')
 
+@section('title', 'Penjualan')
+
 @section('content')
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=DM+Sans:wght@300;400;500;600&display=swap');
@@ -18,7 +20,8 @@
 
         body,
         * {
-            font-family: 'DM Sans', sans-serif;
+            font-family: var(--font-body);
+            font-display: var(--font-body);
         }
 
         /* ── HEADER ── */
@@ -50,7 +53,8 @@
         }
 
         .page-title {
-            font-family: 'Playfair Display', serif;
+            font-family: font-family: var(--font-body);
+            font-display: var(--font-body);
             font-size: 1.75rem;
             font-weight: 800;
             color: var(--dark);
@@ -199,7 +203,8 @@
         }
 
         .table-header-title {
-            font-family: 'Playfair Display', serif;
+            font-family: font-family: var(--font-body);
+            font-display: var(--font-body);
             font-size: 1rem;
             font-weight: 700;
             color: white;
@@ -267,7 +272,8 @@
         }
 
         .pendapatan-cell {
-            font-family: 'Playfair Display', serif;
+            font-family: font-family: var(--font-body);
+            font-display: var(--font-body);
             font-weight: 700;
             font-size: 0.92rem;
             color: var(--dark);
@@ -295,7 +301,8 @@
         }
 
         .laporan-table tfoot th:last-child {
-            font-family: 'Playfair Display', serif;
+            font-family: font-family: var(--font-body);
+            font-display: var(--font-body);
             font-size: 1.4rem;
             font-weight: 900;
             color: var(--orange);
@@ -513,10 +520,21 @@
             if ($.fn.DataTable.isDataTable('.datatable')) {
                 $('.datatable').DataTable().destroy();
             }
+
+            // Jangan init kalau data kosong
+            if ($('.datatable tbody tr.empty-row').length > 0) return;
+
             $('.datatable').DataTable({
                 retrieve: true,
                 language: {
-                    emptyTable: "Tidak ada data yang tersedia"
+                    search: "Cari:",
+                    lengthMenu: "Tampilkan _MENU_ data",
+                    info: "Menampilkan _START_ - _END_ dari _TOTAL_ data",
+                    emptyTable: "Tidak ada data yang tersedia",
+                    paginate: {
+                        previous: "Prev",
+                        next: "Next"
+                    }
                 }
             });
         }
@@ -532,7 +550,6 @@
                 $('.filter-year').show();
             }
 
-            // Update badge text
             const labels = {
                 harian: 'Harian',
                 bulanan: 'Bulanan',
@@ -569,7 +586,7 @@
                             $('.datatable').DataTable().destroy();
                         }
                         $('#tableWrapper').html($(res).find('#tableWrapper').html());
-                        initDataTable();
+                        initDataTable(); // sudah ada pengecekan empty-row di dalam
                     }
                 });
             });

@@ -5,11 +5,15 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>{{ config('app.name', 'Warung Babi Guling') }}</title>
+    <title>Sari Nadi — @yield('title', 'Dashboard')</title>
+    <link rel="icon" type="image/png" href="{{ asset('image/logo_sari_nadi_transparent.png') }}">
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link
+    {{-- <link
         href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=DM+Sans:wght@300;400;500;600&display=swap"
+        rel="stylesheet"> --}}
+
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
         rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 
@@ -31,8 +35,11 @@
             --dark-3: #3d2310;
             --sidebar-width: 15rem;
             --topbar-height: 64px;
-            --font-body: 'DM Sans', sans-serif;
-            --font-display: 'Playfair Display', serif;
+            /* --font-body: 'DM Sans', sans-serif;
+            --font-display: font-family: var(--font-body);
+            font-display: var(--font-body); */
+            --font-body: 'Inter', sans-serif;
+            --font-display: 'Inter', sans-serif;
             --text: #3d2b1a;
             --text-light: #8c7060;
             --bg: #f7f3ef;
@@ -46,10 +53,12 @@
             box-sizing: border-box;
             margin: 0;
             padding: 0;
+            font-style: normal !important;
         }
 
         body {
             font-family: var(--font-body);
+            font-display: var(--font-body);
             background: var(--bg);
             color: var(--text);
             overflow-x: hidden;
@@ -105,7 +114,6 @@
         .sidebar-brand-icon {
             width: 44px;
             height: 44px;
-            background: var(--orange);
             border-radius: 12px;
             display: flex;
             align-items: center;
@@ -113,6 +121,12 @@
             font-size: 1.2rem;
             flex-shrink: 0;
             box-shadow: 0 6px 18px rgba(211, 84, 0, 0.4);
+        }
+
+        .sidebar-brand-icon img {
+            width: 40px;
+            height: 40px;
+            object-fit: contain;
         }
 
         .sidebar-brand-text .title {
@@ -701,7 +715,7 @@
         <div id="sidebar-wrapper">
             <a class="sidebar-brand" href="{{ url('/') }}">
                 <div class="sidebar-brand-icon">
-                    <i class="fas fa-fire"></i>
+                    <img src="{{ asset('image/logo_sari_nadi_transparent.png') }}" alt="Logo">
                 </div>
                 <div class="sidebar-brand-text">
                     <span class="title">Sari <span>Nadi</span></span>
@@ -825,17 +839,14 @@
     <script>
         $(document).ready(function() {
             $('.datatable').DataTable({
+                if (!$.fn.DataTable.isDataTable(this)) { // ← tambah pengecekan ini
+            $(this).DataTable({
                 pageLength: 5,
                 lengthMenu: [5, 10, 25, 50],
-                language: {
-                    search: "Cari:",
-                    lengthMenu: "Tampilkan _MENU_ data",
-                    info: "Menampilkan _START_ - _END_ dari _TOTAL_ data",
-                    paginate: {
-                        previous: "Prev",
-                        next: "Next"
-                    }
-                }
+                language: { ... }
+            });
+        }
+
             });
         });
 

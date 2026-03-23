@@ -1,5 +1,7 @@
 @extends('layouts.admin')
 
+@section('title', 'Detail Transaksi')
+
 @section('content')
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=DM+Sans:wght@300;400;500;600&display=swap');
@@ -16,7 +18,8 @@
 
         body,
         * {
-            font-family: 'DM Sans', sans-serif;
+            font-family: var(--font-body);
+            font-display: var(--font-body);
         }
 
         /* ── HEADER ── */
@@ -48,7 +51,8 @@
         }
 
         .page-title {
-            font-family: 'Playfair Display', serif;
+            font-family: font-family: var(--font-body);
+            font-display: var(--font-body);
             font-size: 1.75rem;
             font-weight: 800;
             color: var(--dark);
@@ -113,7 +117,8 @@
         }
 
         .detail-header-title {
-            font-family: 'Playfair Display', serif;
+            font-family: font-family: var(--font-body);
+            font-display: var(--font-body);
             font-size: 1.05rem;
             font-weight: 700;
             color: white;
@@ -155,7 +160,8 @@
 
         .info-box-value.orange {
             color: var(--orange);
-            font-family: 'Playfair Display', serif;
+            font-family: font-family: var(--font-body);
+            font-display: var(--font-body);
         }
 
         /* ── TABLE ── */
@@ -251,7 +257,8 @@
         }
 
         .total-value {
-            font-family: 'Playfair Display', serif;
+            font-family: font-family: var(--font-body);
+            font-display: var(--font-body);
             font-size: 1.4rem;
             font-weight: 900;
             color: var(--orange);
@@ -264,7 +271,7 @@
         {{-- HEADER --}}
         <div class="page-header">
             <div>
-                <h1 class="page-title">Detail  <em>Transaksi</em></h1>
+                <h1 class="page-title">Detail <em>Transaksi</em></h1>
             </div>
             <a href="{{ route('transaksi.index') }}" class="btn-back">
                 <i class="fas fa-arrow-left"></i> Kembali
@@ -308,7 +315,7 @@
                         @foreach ($transaksi->detail as $i => $item)
                             <tr>
                                 <td style="color:var(--text-sub);font-size:0.78rem">{{ $i + 1 }}</td>
-                                <td class="produk-name-cell">{{ $item->produk->nama_produk }}</td>
+                                <td class="produk-name-cell">{{ $item->nama_produk }}</td>
                                 <td class="harga-cell">Rp {{ number_format($item->harga_satuan) }}</td>
                                 <td><span class="qty-badge">{{ $item->jumlah }}</span></td>
                                 <td class="total-cell" style="text-align:right">Rp {{ number_format($item->total_harga) }}
@@ -321,6 +328,10 @@
                 {{-- Total --}}
                 <div class="total-section">
                     <div class="total-box">
+                        <a href="{{ route('transaksi.cetak', $transaksi->id) }}" target="_blank" class="btn-back"
+                            style="background:var(--orange);color:#fff;border-color:var(--orange);">
+                            <i class="fas fa-print"></i> Cetak Struk
+                        </a>
                         <div class="total-label">Grand Total</div>
                         <div class="total-value">Rp {{ number_format($transaksi->subtotal) }}</div>
                     </div>

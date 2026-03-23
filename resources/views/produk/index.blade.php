@@ -1,5 +1,7 @@
 @extends('layouts.admin')
 
+@section('title', 'Daftar Produk')
+
 @section('content')
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=DM+Sans:wght@300;400;500;600&display=swap');
@@ -51,7 +53,8 @@
         }
 
         .page-title {
-            font-family: 'Playfair Display', serif;
+            font-family: font-family: var(--font-body);
+            font-display: var(--font-body);
             font-size: 1.75rem;
             font-weight: 800;
             color: var(--dark);
@@ -118,7 +121,8 @@
         }
 
         .table-header-title {
-            font-family: 'Playfair Display', serif;
+            font-family: font-family: var(--font-body);
+            font-display: var(--font-body);
             font-size: 1rem;
             font-weight: 700;
             color: white;
@@ -196,7 +200,8 @@
         }
 
         .harga-cell {
-            font-family: 'Playfair Display', serif;
+            font-family: font-family: var(--font-body);
+            font-display: var(--font-body);
             font-weight: 700;
             font-size: 0.92rem;
             color: var(--orange);
@@ -405,7 +410,8 @@
         }
 
         .modal-danger-title {
-            font-family: 'Playfair Display', serif;
+            font-family: font-family: var(--font-body);
+            font-display: var(--font-body);
             font-size: 1rem;
             font-weight: 700;
             color: white;

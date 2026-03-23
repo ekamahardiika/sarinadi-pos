@@ -1,5 +1,7 @@
 @extends('layouts.admin')
 
+@section('title', 'Edit Produk')
+
 @section('content')
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=DM+Sans:wght@300;400;500;600&display=swap');
@@ -26,28 +28,7 @@
             border-bottom: 1px solid var(--border);
         }
 
-        .page-eyebrow {
-            font-size: 0.72rem;
-            font-weight: 700;
-            letter-spacing: 0.15em;
-            text-transform: uppercase;
-            color: var(--orange);
-            margin-bottom: 4px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .page-eyebrow::before {
-            content: '';
-            width: 20px;
-            height: 2px;
-            background: var(--orange);
-            border-radius: 2px;
-        }
-
         .page-title {
-            font-family: 'Playfair Display', serif;
             font-size: 1.75rem;
             font-weight: 800;
             color: var(--dark);
@@ -112,7 +93,6 @@
         }
 
         .form-header-title {
-            font-family: 'Playfair Display', serif;
             font-size: 1rem;
             font-weight: 700;
             color: white;
@@ -265,6 +245,11 @@
             border-style: solid;
             border-color: var(--orange);
             padding: 16px;
+        }
+
+        .upload-area.is-invalid {
+            border-color: #e74c3c;
+            background: #fff8f8;
         }
 
         .upload-icon {
@@ -425,8 +410,7 @@
                                 class="field-input @error('harga') is-invalid @enderror"
                                 value="{{ old('harga', $produk->harga) }}" placeholder="0">
                             @error('harga')
-                                <div class="invalid-feedback"><i class="fas fa-exclamation-circle"></i> {{ $message }}
-                                </div>
+                                <div class="invalid-feedback"><i class="fas fa-exclamation-circle"></i> {{ $message }}</div>
                             @enderror
                         </div>
 
@@ -436,14 +420,11 @@
                                 class="field-input @error('stok') is-invalid @enderror"
                                 value="{{ old('stok', $produk->stok) }}" placeholder="0">
                             @error('stok')
-                                <div class="invalid-feedback"><i class="fas fa-exclamation-circle"></i> {{ $message }}
-                                </div>
+                                <div class="invalid-feedback"><i class="fas fa-exclamation-circle"></i> {{ $message }}</div>
                             @enderror
                         </div>
 
                     </div>
-
-                    {{-- <hr class="form-divider"> --}}
 
                     {{-- Gambar Saat Ini --}}
                     <div class="field-group">
@@ -472,14 +453,14 @@
                         <label class="field-label">Ganti Gambar <span
                                 style="font-weight:400;text-transform:none;letter-spacing:0;color:var(--text-sub)">(opsional)</span></label>
 
-                        <div class="upload-area" id="uploadArea">
+                        <div class="upload-area @error('gambar') is-invalid @enderror" id="uploadArea">
                             <input type="file" name="gambar" class="upload-input" accept="image/*"
                                 onchange="previewImage(event)">
 
                             <div id="uploadDefault">
                                 <i class="fas fa-cloud-upload-alt upload-icon"></i>
                                 <div class="upload-text">Klik untuk upload gambar baru</div>
-                                <div class="upload-hint">JPG, PNG, JPEG — Kosongkan jika tidak ingin mengganti</div>
+                                <div class="upload-hint">JPG, PNG, JPEG — Maks. 2MB — Kosongkan jika tidak ingin mengganti</div>
                             </div>
 
                             <div class="preview-wrap" id="previewWrap">
@@ -488,6 +469,16 @@
                                 <div class="preview-change">Klik untuk ganti gambar</div>
                             </div>
                         </div>
+
+                        {{-- Error ukuran (JS) --}}
+                        <div id="uploadError" class="invalid-feedback" style="display:none;">
+                            <i class="fas fa-exclamation-circle"></i> Ukuran gambar melebihi batas maksimal 5MB.
+                        </div>
+
+                        {{-- Error dari server (Laravel validation) --}}
+                        @error('gambar')
+                            <div class="invalid-feedback"><i class="fas fa-exclamation-circle"></i> {{ $message }}</div>
+                        @enderror
                     </div>
 
                     <hr class="form-divider">
@@ -512,20 +503,55 @@
 @endsection
 
 @push('scripts')
-    <script>
-        function previewImage(event) {
-            const file = event.target.files[0];
-            if (!file) return;
+<script>
+    let fileValid = true; // track status file
 
-            const reader = new FileReader();
-            reader.onload = function() {
-                document.getElementById('preview').src = reader.result;
-                document.getElementById('previewName').textContent = file.name;
-                document.getElementById('previewWrap').classList.add('show');
-                document.getElementById('uploadDefault').style.display = 'none';
-                document.getElementById('uploadArea').classList.add('has-preview');
-            };
-            reader.readAsDataURL(file);
+    function previewImage(event) {
+        const file = event.target.files[0];
+        if (!file) return;
+
+        const maxSize = 2 * 1024 * 1024; // 5MB
+        const errorEl   = document.getElementById('uploadError');
+        const uploadArea = document.getElementById('uploadArea');
+
+        if (file.size > maxSize) {
+            // Tandai file tidak valid
+            fileValid = false;
+
+            errorEl.style.display = 'flex';
+            uploadArea.classList.add('is-invalid');
+            uploadArea.classList.remove('has-preview');
+
+            // Reset preview & input
+            document.getElementById('previewWrap').classList.remove('show');
+            document.getElementById('uploadDefault').style.display = '';
+            event.target.value = ''; // reset input file
+            return;
         }
-    </script>
+
+        // File valid
+        fileValid = true;
+        errorEl.style.display = 'none';
+        uploadArea.classList.remove('is-invalid');
+
+        const reader = new FileReader();
+        reader.onload = function () {
+            document.getElementById('preview').src = reader.result;
+            document.getElementById('previewName').textContent = file.name;
+            document.getElementById('previewWrap').classList.add('show');
+            document.getElementById('uploadDefault').style.display = 'none';
+            uploadArea.classList.add('has-preview');
+        };
+        reader.readAsDataURL(file);
+    }
+
+    // Blokir submit jika file tidak valid
+    document.querySelector('form').addEventListener('submit', function (e) {
+        if (!fileValid) {
+            e.preventDefault();
+            document.getElementById('uploadError').style.display = 'flex';
+            document.getElementById('uploadArea').classList.add('is-invalid');
+        }
+    });
+</script>
 @endpush

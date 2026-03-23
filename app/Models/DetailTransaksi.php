@@ -7,6 +7,7 @@ use App\Models\Produk;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
+// DetailTransaksi.php
 class DetailTransaksi extends Model
 {
     use HasFactory;
@@ -15,7 +16,8 @@ class DetailTransaksi extends Model
 
     protected $fillable = [
         'transaksi_id',
-        'produk_id',
+        'produk_id',   // nullable sekarang
+        'nama_produk',
         'jumlah',
         'harga_satuan',
         'total_harga'
@@ -28,6 +30,11 @@ class DetailTransaksi extends Model
 
     public function produk()
     {
-        return $this->belongsTo(Produk::class);
+        return $this->belongsTo(Produk::class)->withDefault([
+            'nama_produk' => 'Produk Dihapus',
+            'harga' => 0,
+            'stok' => 0,
+            'gambar' => null,
+        ]);
     }
 }

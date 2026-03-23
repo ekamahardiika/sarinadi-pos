@@ -1,5 +1,7 @@
 @extends('layouts.admin')
 
+@section('title', 'Tambah Produk')
+
 @section('content')
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=DM+Sans:wght@300;400;500;600&display=swap');
@@ -19,7 +21,6 @@
             font-family: 'DM Sans', sans-serif;
         }
 
-        /* ── HEADER ── */
         .page-header {
             display: flex;
             align-items: flex-end;
@@ -48,7 +49,6 @@
         }
 
         .page-title {
-            font-family: 'Playfair Display', serif;
             font-size: 1.75rem;
             font-weight: 800;
             color: var(--dark);
@@ -82,7 +82,6 @@
             box-shadow: 0 4px 14px rgba(211, 84, 0, 0.12);
         }
 
-        /* ── FORM CARD ── */
         .form-card {
             background: #fff;
             border: 1px solid var(--border);
@@ -114,7 +113,6 @@
         }
 
         .form-header-title {
-            font-family: 'Playfair Display', serif;
             font-size: 1rem;
             font-weight: 700;
             color: white;
@@ -124,7 +122,6 @@
             padding: 28px;
         }
 
-        /* ── FIELD ── */
         .field-group {
             margin-bottom: 22px;
         }
@@ -181,16 +178,6 @@
             gap: 5px;
         }
 
-        .field-hint {
-            font-size: 0.75rem;
-            color: var(--text-sub);
-            margin-top: 6px;
-            display: flex;
-            align-items: center;
-            gap: 5px;
-        }
-
-        /* ── FILE UPLOAD ── */
         .upload-area {
             border: 2px dashed var(--border);
             border-radius: 12px;
@@ -211,6 +198,11 @@
             border-style: solid;
             border-color: var(--orange);
             padding: 16px;
+        }
+
+        .upload-area.is-invalid {
+            border-color: #e74c3c;
+            background: #fff8f8;
         }
 
         .upload-icon {
@@ -274,14 +266,11 @@
             cursor: pointer;
         }
 
-        /* ── DIVIDER ── */
         .form-divider {
             border: none;
             border-top: 1px solid var(--border);
-            /* margin: 24px 0; */
         }
 
-        /* ── FOOTER BUTTONS ── */
         .form-footer {
             display: flex;
             gap: 12px;
@@ -362,8 +351,8 @@
                     <div class="field-group">
                         <label class="field-label" for="nama_produk">Nama Produk</label>
                         <input type="text" id="nama_produk" name="nama_produk"
-                            class="field-input @error('nama_produk') is-invalid @enderror" value="{{ old('nama_produk') }}"
-                            placeholder="Masukkan nama produk">
+                            class="field-input @error('nama_produk') is-invalid @enderror"
+                            value="{{ old('nama_produk') }}" placeholder="Masukkan nama produk">
                         @error('nama_produk')
                             <div class="invalid-feedback"><i class="fas fa-exclamation-circle"></i> {{ $message }}</div>
                         @enderror
@@ -375,34 +364,30 @@
                         <div class="field-group">
                             <label class="field-label" for="harga">Harga</label>
                             <input type="number" id="harga" name="harga"
-                                class="field-input @error('harga') is-invalid @enderror" value="{{ old('harga') }}"
-                                placeholder="0">
+                                class="field-input @error('harga') is-invalid @enderror"
+                                value="{{ old('harga') }}" placeholder="0">
                             @error('harga')
-                                <div class="invalid-feedback"><i class="fas fa-exclamation-circle"></i> {{ $message }}
-                                </div>
+                                <div class="invalid-feedback"><i class="fas fa-exclamation-circle"></i> {{ $message }}</div>
                             @enderror
                         </div>
 
                         <div class="field-group">
                             <label class="field-label" for="stok">Stok</label>
                             <input type="number" id="stok" name="stok"
-                                class="field-input @error('stok') is-invalid @enderror" value="{{ old('stok') }}"
-                                placeholder="0">
+                                class="field-input @error('stok') is-invalid @enderror"
+                                value="{{ old('stok') }}" placeholder="0">
                             @error('stok')
-                                <div class="invalid-feedback"><i class="fas fa-exclamation-circle"></i> {{ $message }}
-                                </div>
+                                <div class="invalid-feedback"><i class="fas fa-exclamation-circle"></i> {{ $message }}</div>
                             @enderror
                         </div>
 
                     </div>
 
-                    {{-- <hr class="form-divider"> --}}
-
                     {{-- Gambar --}}
                     <div class="field-group">
                         <label class="field-label">Gambar Produk</label>
 
-                        <div class="upload-area" id="uploadArea">
+                        <div class="upload-area @error('gambar') is-invalid @enderror" id="uploadArea">
                             <input type="file" name="gambar" class="upload-input" accept="image/*"
                                 onchange="previewImage(event)" id="inputGambar">
 
@@ -420,13 +405,23 @@
                                 <div class="preview-change">Klik untuk ganti gambar</div>
                             </div>
                         </div>
+
+                        {{-- Error ukuran (JS) --}}
+                        <div id="uploadError" class="invalid-feedback" style="display:none;">
+                            <i class="fas fa-exclamation-circle"></i> Ukuran gambar melebihi batas maksimal 5MB.
+                        </div>
+
+                        {{-- Error dari server (Laravel validation) --}}
+                        @error('gambar')
+                            <div class="invalid-feedback"><i class="fas fa-exclamation-circle"></i> {{ $message }}</div>
+                        @enderror
                     </div>
 
                     <hr class="form-divider">
 
                     {{-- Footer --}}
                     <div class="form-footer">
-                        <button type="submit" class="btn-simpan">
+                        <button type="submit" class="btn-simpan" id="btnSimpan">
                             <i class="fas fa-check"></i> Simpan Produk
                         </button>
                         <a href="{{ route('produk.index') }}" class="btn-batal">
@@ -444,26 +439,55 @@
 @endsection
 
 @push('scripts')
-    <script>
-        function previewImage(event) {
-            const file = event.target.files[0];
-            if (!file) return;
+<script>
+    let fileValid = true; // track status file
 
-            const reader = new FileReader();
-            reader.onload = function() {
-                const preview = document.getElementById('preview');
-                const previewWrap = document.getElementById('previewWrap');
-                const uploadDefault = document.getElementById('uploadDefault');
-                const uploadArea = document.getElementById('uploadArea');
-                const previewName = document.getElementById('previewName');
+    function previewImage(event) {
+        const file = event.target.files[0];
+        if (!file) return;
 
-                preview.src = reader.result;
-                previewName.textContent = file.name;
-                previewWrap.classList.add('show');
-                uploadDefault.style.display = 'none';
-                uploadArea.classList.add('has-preview');
-            };
-            reader.readAsDataURL(file);
+        const maxSize = 2 * 1024 * 1024; // 5MB
+        const errorEl   = document.getElementById('uploadError');
+        const uploadArea = document.getElementById('uploadArea');
+
+        if (file.size > maxSize) {
+            // Tandai file tidak valid
+            fileValid = false;
+
+            errorEl.style.display = 'flex';
+            uploadArea.classList.add('is-invalid');
+            uploadArea.classList.remove('has-preview');
+
+            // Reset preview & input
+            document.getElementById('previewWrap').classList.remove('show');
+            document.getElementById('uploadDefault').style.display = '';
+            event.target.value = ''; // reset input file
+            return;
         }
-    </script>
+
+        // File valid
+        fileValid = true;
+        errorEl.style.display = 'none';
+        uploadArea.classList.remove('is-invalid');
+
+        const reader = new FileReader();
+        reader.onload = function () {
+            document.getElementById('preview').src = reader.result;
+            document.getElementById('previewName').textContent = file.name;
+            document.getElementById('previewWrap').classList.add('show');
+            document.getElementById('uploadDefault').style.display = 'none';
+            uploadArea.classList.add('has-preview');
+        };
+        reader.readAsDataURL(file);
+    }
+
+    // Blokir submit jika file tidak valid
+    document.querySelector('form').addEventListener('submit', function (e) {
+        if (!fileValid) {
+            e.preventDefault();
+            document.getElementById('uploadError').style.display = 'flex';
+            document.getElementById('uploadArea').classList.add('is-invalid');
+        }
+    });
+</script>
 @endpush

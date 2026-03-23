@@ -64,6 +64,7 @@ class TransaksiController extends Controller
             DetailTransaksi::create([
                 'transaksi_id' => $transaksi->id,
                 'produk_id' => $id,
+                'nama_produk' => $produk->nama_produk,
                 'jumlah' => $jumlah,
                 'harga_satuan' => $harga,
                 'total_harga' => $total
@@ -99,7 +100,7 @@ class TransaksiController extends Controller
         return redirect()->route('transaksi.index', $transaksi->id)->with([
             'snapToken' => $snapToken,
             'transaksi_id' => $transaksi->id
-            ]);;
+        ]);;
     }
 
 
@@ -120,10 +121,10 @@ class TransaksiController extends Controller
         return view('transaksi.detail', compact('transaksi'));
     }
 
-    public function pay($id)
+    public function cetak($id)
     {
-        $transaksi = Transaksi::findOrFail($id);
+        $transaksi = Transaksi::with('detail.produk')->findOrFail($id);
 
-        return view('transaksi.pay', compact('transaksi'));
+        return view('transaksi.cetak', compact('transaksi'));
     }
 }
