@@ -18,7 +18,7 @@ Sarinadi POS hadir sebagai solusi kasir modern untuk usaha kecil dan menengah. D
 - 📈 **Laporan Penjualan** — Lihat ringkasan dan riwayat transaksi penjualan.
 - 📤 **Export Excel** — Ekspor data laporan ke format `.xlsx` untuk keperluan arsip atau analisis.
 - 🧾 **Cetak PDF / Struk** — Cetak struk transaksi dan laporan dalam format PDF.
-- 💳 **Payment Gateway (Midtrans)** — Mendukung pembayaran digital melalui integrasi Midtrans.
+- 💳 **Payment Gateway (Midtrans)** — Mendukung pembayaran digital melalui integrasi Midtrans(hanya sandbox).
 
 ---
 
@@ -26,8 +26,8 @@ Sarinadi POS hadir sebagai solusi kasir modern untuk usaha kecil dan menengah. D
 
 | Teknologi | Versi |
 |---|---|
-| PHP | ^8.1 |
-| Laravel | ^10.10 |
+| PHP | ^8.4 |
+| Laravel | ^12.x |
 | Laravel UI | ^4.6 |
 | Midtrans PHP SDK | ^2.6 |
 | Maatwebsite Excel | ^3.1 |
