@@ -5,6 +5,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Warung Babi Guling Sari Nadi</title>
+    <link rel="icon" type="image/png" href="{{ asset('image/logo_sari_nadi_transparent.png') }}">
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link

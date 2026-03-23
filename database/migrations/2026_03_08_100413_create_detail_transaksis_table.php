@@ -12,6 +12,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('transaksi_id')->constrained('transaksis')->cascadeOnDelete();
             $table->foreignId('produk_id')->nullable()->constrained('produks')->nullOnDelete();
+            $table->string('nama_produk');
             $table->integer('jumlah');
             $table->integer('harga_satuan');
             $table->integer('total_harga');

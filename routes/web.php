@@ -26,12 +26,12 @@ Route::middleware('auth')->group(function () {
     Route::resource('produk', ProdukController::class);
 
     // Transaksi
-    Route::get('/transaksi', [TransaksiController::class, 'index'])->name('transaksi.index');
-    Route::post('/transaksi/store', [TransaksiController::class, 'store'])->name('transaksi.store');
-    Route::get('/transaksi/riwayat', [TransaksiController::class, 'riwayat'])->name('transaksi.riwayat');
-    Route::get('/transaksi/{id}', [TransaksiController::class, 'show'])->name('transaksi.show');
-    Route::get('/transaksi/{id}/cetak', [TransaksiController::class, 'cetak'])->name('transaksi.cetak');
-
+    Route::get('/transaksi', [TransaksiController::class,'index'])->name('transaksi.index');
+    Route::post('/transaksi/store', [TransaksiController::class,'store'])->name('transaksi.store');
+    Route::get('/transaksi/riwayat', [TransaksiController::class,'riwayat'])->name('transaksi.riwayat');
+    Route::get('/transaksi/{id}', [TransaksiController::class,'show'])->name('transaksi.show');
+    Route::get('/transaksi/detail/{id}', [TransaksiController::class,'show'])->name('transaksi.detail');
+    Route::get('/transaksi/cetak/{id}', [TransaksiController::class, 'cetak'])->name('transaksi.cetak');
     // Laporan
     Route::get('/laporan/penjualan', [LaporanController::class, 'index'])->name('laporan.penjualan');
     Route::get('/laporan/produk-terlaris', [LaporanController::class, 'produkTerlaris'])->name('laporan.produk.terlaris');

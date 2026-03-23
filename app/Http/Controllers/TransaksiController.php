@@ -64,6 +64,7 @@ class TransaksiController extends Controller
             DetailTransaksi::create([
                 'transaksi_id' => $transaksi->id,
                 'produk_id' => $id,
+                'nama_produk' => $produk->nama_produk,
                 'jumlah' => $jumlah,
                 'harga_satuan' => $harga,
                 'total_harga' => $total
@@ -73,7 +74,33 @@ class TransaksiController extends Controller
             $produk->decrement('stok', $jumlah);
         }
 
-        return redirect()->route('transaksi.show', $transaksi->id);
+        if ($request->metode_pembayaran == 'cash') {
+            return redirect()->route('transaksi.show', $transaksi->id);
+        }
+
+        // dd(config('midtrans.serverKey'));
+        \Midtrans\Config::$serverKey = config('midtrans.serverKey');
+        \Midtrans\Config::$isProduction = config('midtrans.isProduction');
+        \Midtrans\Config::$isSanitized = config('midtrans.isSanitized');
+        \Midtrans\Config::$is3ds = config('midtrans.is3ds');
+
+        $params = array(
+            'transaction_details' => array(
+                'order_id' => $transaksi->kode_transaksi,
+                'gross_amount' => $subtotal,
+            ),
+
+        );
+
+        $snapToken = \Midtrans\Snap::getSnapToken($params);
+        $transaksi->snap_token = $snapToken;
+        // dd(config('midtrans'));
+        $transaksi->save();
+
+        return redirect()->route('transaksi.index', $transaksi->id)->with([
+            'snapToken' => $snapToken,
+            'transaksi_id' => $transaksi->id
+        ]);;
     }
 
 
@@ -97,6 +124,7 @@ class TransaksiController extends Controller
     public function cetak($id)
     {
         $transaksi = Transaksi::with('detail.produk')->findOrFail($id);
+
         return view('transaksi.cetak', compact('transaksi'));
     }
 }

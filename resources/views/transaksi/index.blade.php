@@ -639,6 +639,11 @@
         document.getElementById("metode_pembayaran").addEventListener("change", hitungKembalian)
 
         document.getElementById("formTransaksi").addEventListener("submit", function() {
+            if (cart.length === 0) {
+                e.preventDefault()
+                alert("Pilih produk terlebih dahulu")
+                return
+            }
             let container = document.getElementById("hidden-inputs")
             container.innerHTML = ""
             cart.forEach(item => {
@@ -648,4 +653,27 @@
             })
         })
     </script>
+    <script src="https://app.sandbox.midtrans.com/snap/snap.js" data-client-key="{{ config('midtrans.clientKey') }}">
+    </script>
+
+    @if (session('snapToken'))
+        <script>
+            snap.pay('{{ session('snapToken') }}', {
+
+                onSuccess: function(result) {
+                    // alert("Pembayaran berhasil");
+                    window.location.href = "{{ route('transaksi.detail', session('transaksi_id')) }}";
+                },
+
+                onPending: function(result) {
+                    alert("Menunggu pembayaran");
+                },
+
+                onError: function(result) {
+                    alert("Pembayaran gagal");
+                }
+
+            });
+        </script>
+    @endif
 @endsection

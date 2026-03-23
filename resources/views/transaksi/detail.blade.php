@@ -315,7 +315,7 @@
                         @foreach ($transaksi->detail as $i => $item)
                             <tr>
                                 <td style="color:var(--text-sub);font-size:0.78rem">{{ $i + 1 }}</td>
-                                <td class="produk-name-cell">{{ $item->produk->nama_produk }}</td>
+                                <td class="produk-name-cell">{{ $item->nama_produk }}</td>
                                 <td class="harga-cell">Rp {{ number_format($item->harga_satuan) }}</td>
                                 <td><span class="qty-badge">{{ $item->jumlah }}</span></td>
                                 <td class="total-cell" style="text-align:right">Rp {{ number_format($item->total_harga) }}
