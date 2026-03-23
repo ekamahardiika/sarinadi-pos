@@ -29,90 +29,9 @@ Sarinadi POS hadir sebagai solusi kasir modern untuk usaha kecil dan menengah. D
 | PHP | ^8.1 |
 | Laravel | ^10.10 |
 | Laravel UI | ^4.6 |
-| Laravel Sanctum | ^3.3 |
 | Midtrans PHP SDK | ^2.6 |
 | Maatwebsite Excel | ^3.1 |
 | DomPDF (barryvdh) | ^3.1 |
-| Vite | — |
-
----
-
-## ⚙️ Cara Instalasi
-
-### Prasyarat
-Pastikan kamu sudah menginstal:
-- PHP >= 8.1
-- Composer
-- Node.js & NPM
-- MySQL / MariaDB
-
-### Langkah Instalasi
-
-```bash
-# 1. Clone repository
-git clone https://github.com/ekamahardiika/sarinadi-pos.git
-cd sarinadi-pos
-
-# 2. Install dependensi PHP
-composer install
-
-# 3. Install dependensi Node.js
-npm install
-
-# 4. Salin file environment
-cp .env.example .env
-
-# 5. Generate application key
-php artisan key:generate
-
-# 6. Konfigurasi database di file .env
-# DB_DATABASE=nama_database
-# DB_USERNAME=username
-# DB_PASSWORD=password
-
-# 7. Jalankan migrasi dan seeder
-php artisan migrate --seed
-
-# 8. Build assets
-npm run build
-
-# 9. Jalankan server
-php artisan serve
-```
-
-Akses aplikasi di: `http://localhost:8000`
-
----
-
-## 🔑 Konfigurasi Midtrans
-
-Tambahkan konfigurasi berikut pada file `.env`:
-
-```env
-MIDTRANS_SERVER_KEY=your_server_key
-MIDTRANS_CLIENT_KEY=your_client_key
-MIDTRANS_IS_PRODUCTION=false
-MIDTRANS_IS_SANITIZED=true
-MIDTRANS_IS_3DS=true
-```
-
-> Dapatkan Server Key dan Client Key dari dashboard [Midtrans](https://dashboard.midtrans.com).
-
----
-
-## 📁 Struktur Direktori
-
-```
-sarinadi-pos/
-├── app/                  # Logic aplikasi (Controllers, Models, dll)
-├── config/               # Konfigurasi aplikasi
-├── database/             # Migrasi dan seeder
-├── public/               # Aset publik
-├── resources/            # Views (Blade), CSS, JS
-├── routes/               # Definisi route
-├── storage/              # File upload dan log
-└── tests/                # Unit & Feature tests
-```
 
 ---
 
@@ -124,4 +43,4 @@ Proyek ini dilisensikan di bawah [MIT License](https://opensource.org/licenses/M
 
 ## 👤 Developer
 
-Dibuat oleh **[ekamahardiika](https://github.com/ekamahardiika)**
+Dibuat oleh **[ekamahardiika](https://github.com/ekamahardiika)** & **[bayuistired](https://github.com/bayuistired)**
